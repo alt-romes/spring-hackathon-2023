@@ -6,6 +6,7 @@
 #include <bluetooth/hci.h>
 #include <bluetooth/hci_lib.h>
 #include <bluetooth/rfcomm.h>
+#include <errno.h>
 
 int search() {
     inquiry_info *ii = NULL;
@@ -22,7 +23,7 @@ int search() {
         exit(1);
     }
 
-    len = 16;
+    len = 8;
     max_rsp = 255;
     //flags = IREQ_CACHE_FLUSH;
     flags = 0;
@@ -47,6 +48,22 @@ int search() {
     close(sock);
 }
 
+
+
+int dynamic_bind_rc(int sock, struct sockaddr_rc *sockaddr, uint8_t *port) {
+    int err;
+    for( *port = 1; *port <= 31; *port++ ) {
+        sockaddr->rc_channel = *port;
+        err = bind(sock, (struct sockaddr *)sockaddr, sizeof(sockaddr));
+        if( !err || errno == EINVAL ) break;
+    }
+    if( *port == 31 ) {
+        err = -1;
+        errno = EINVAL;
+    }
+    return err;
+}
+
 int server() {
     struct sockaddr_rc loc_addr = { 0 }, rem_addr = { 0 };
     char buf[1024] = { 0 };
@@ -61,7 +78,10 @@ int server() {
     loc_addr.rc_family = AF_BLUETOOTH;
     loc_addr.rc_bdaddr = *BDADDR_ANY;
     loc_addr.rc_channel = (uint8_t) 1;
-    bind(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
+    //bind(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
+    uint8_t port;
+    dynamic_bind_rc(s, &loc_addr, &port);
+    fprintf(stderr, "binded %d socket to port %d\n", s, port);
 
     // put socket into listening mode
     listen(s, 1);
