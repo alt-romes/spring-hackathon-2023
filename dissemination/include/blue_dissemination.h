@@ -9,10 +9,10 @@ typedef struct blue_diss {
     int*   seen;      // hashes of messages we've seen recently
 } blue_diss_t;
 
-struct msg {
+typedef struct msg {
     size_t size;
     char*  buf;
-};
+} msg_t;
 
 struct Config {
 
@@ -24,6 +24,9 @@ int broadcast(blue_diss_t*, char* msg);
 
 int receive(blue_diss_t*, char* msg, int count);
 
+msg_t * alloc_msg(size_t size);
+
+void free_msg(msg_t * msg);
 
 // Stubs
 

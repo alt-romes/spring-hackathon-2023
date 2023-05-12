@@ -2,6 +2,8 @@
 #include <blue_dissemination.h>
 #include <blue_dissemination.h>
 
+#include <stdlib.h>
+
 #define hashsize(n) ((uint64_t)1<<(n))
 #define hashmask(n) (hashsize(n)-1)
 
@@ -30,5 +32,15 @@ int broadcast(blue_diss_t* bd, void* msg, size_t size) {
 
 int receive(blue_diss_t* bd, void** msg, int* size) {
     return 0;
+}
+
+msg_t * alloc_msg(size_t size)
+{
+    return (msg_t *) malloc(sizeof(msg_t) + size);
+}
+
+void free_msg(msg_t * msg)
+{
+    free(msg);
 }
 
