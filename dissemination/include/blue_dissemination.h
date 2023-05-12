@@ -24,9 +24,9 @@ struct Config {
 
 blue_diss_t* init(struct Config);
 
-int broadcast(blue_diss_t*, msg_t msg);
+int broadcast(blue_diss_t*, msg_t * msg);
 
-int receive(blue_diss_t*, msg_t msg);
+int receive(blue_diss_t*, msg_t * msg);
 
 msg_t * alloc_msg(size_t size);
 
