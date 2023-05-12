@@ -9,11 +9,11 @@ int main(int argc, char *argv[])
 {
     if (argc == 1)
     {
-        printf("Program usage:\n\tpropagate [-b \"path_to_file\"|-p]");
+        printf("Program usage:\n\tpropagate [-b \"msg\"|-p]\n");
     }
     int c = 0;
     int pflag = 0;
-    char *path = NULL;
+    char *msg = NULL;
 
     opterr = 0;
 
@@ -22,9 +22,11 @@ int main(int argc, char *argv[])
         {
         case 'p':
             pflag = 1;
+            printf("pflag up\n");
             break;
         case 'b':
-            path = optarg;
+            msg = optarg;
+            printf("%s\n",msg);
             break;
         case '?':
             if (optopt == 'b')
