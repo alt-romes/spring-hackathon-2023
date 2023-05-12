@@ -125,10 +125,13 @@ int client(char *destination) {
 
     // send a message
     if(status == 0) {
-        status = write(s, "hello!", 6);
+        status = write(s, message, strlen(message));
     }
 
-    if(status < 0) perror("uh oh");
+    if(status < 0)
+        perror("uh oh");
+    else
+        printf("Message sent successfuly\n");
 
     close(s);
 }
