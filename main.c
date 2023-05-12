@@ -121,7 +121,7 @@ int main(int argc, char **argv) {
 	            search();
 	    		break;
             case 's':
-	            search();
+	            server();
 	    		break;
             case 'c':
 	            client(optarg);
