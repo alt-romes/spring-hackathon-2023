@@ -89,6 +89,7 @@ int client(char *dest) {
     struct sockaddr_rc addr = { 0 };
     int s, status;
     //char dest[18] = "01:23:45:67:89:AB";
+    printf("Trying to connect to %s\n", dest);
 
     // allocate a socket
     s = socket(AF_BLUETOOTH, SOCK_STREAM, BTPROTO_RFCOMM);
@@ -115,7 +116,7 @@ int client(char *dest) {
 int main(int argc, char **argv) {
     int opt;
 
-    while((opt = getopt(argc, argv, "isc")) != -1) {
+    while((opt = getopt(argc, argv, "isc:")) != -1) {
 	    switch(opt) {
             case 'i':
 	            search();
