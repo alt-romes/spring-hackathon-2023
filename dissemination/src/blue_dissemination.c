@@ -10,7 +10,7 @@ blue_diss_t* init(struct Config cfg) {
     return bd;
 }
 
-int broadcast(blue_diss_t* bd, void* msg) {
+int broadcast(blue_diss_t* bd, void* msg, size_t size) {
 
     int size;
     in_addr_t* addrs;
@@ -21,7 +21,9 @@ int broadcast(blue_diss_t* bd, void* msg) {
     for (int i = 0; i < size; i++)
         blue_send(addrs[i], msg);
 
-    hashmask(msg);
+    int hash = MurmurHash3_x86_32(msg, size);
+    bd->seen[hashmask(hash)] = hash;
+    bd->in_flight
 
     return 0;
 }

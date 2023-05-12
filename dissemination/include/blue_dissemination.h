@@ -4,9 +4,15 @@
 #include <arpa/inet.h>
 
 typedef struct blue_diss {
-    void** in_flight; // messages we're still periodically broadcasting
+    msg in_flight[32]; // messages we're still periodically broadcasting
+    int count_in_flight;
     int*   seen;      // hashes of messages we've seen recently
 } blue_diss_t;
+
+struct msg {
+    size_t size;
+    char*  buf;
+};
 
 struct Config {
 
@@ -14,9 +20,9 @@ struct Config {
 
 blue_diss_t* init(struct Config);
 
-int broadcast(blue_diss_t*, void* msg);
+int broadcast(blue_diss_t*, char* msg);
 
-int receive(blue_diss_t*, void* msg, int count);
+int receive(blue_diss_t*, char* msg, int count);
 
 
 // Stubs
