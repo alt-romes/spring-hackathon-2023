@@ -1,7 +1,9 @@
 #ifndef BLUE_DISSEMINATION_H
 #define BLUE_DISSEMINATION_H
 
-typedef struct blue_diss {
+#include <arpa/inet.h>
+
+typedef struct blue_diss {
     void** in_flight; // messages we're still periodically broadcasting
     int*   seen;      // hashes of messages we've seen recently
 } blue_diss_t;

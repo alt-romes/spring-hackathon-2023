@@ -1,11 +1,12 @@
 #include <arpa/inet.h>
 #include <blue_dissemination.h>
+#include <blue_dissemination.h>
 
 #define hashsize(n) ((uint64_t)1<<(n))
 #define hashmask(n) (hashsize(n)-1)
 
 blue_diss_t* init(struct Config cfg) {
-    blue_diss* bd = malloc(blue_diss);
+    blue_diss_t* bd = malloc(blue_diss_t);
     return bd;
 }
 
@@ -25,7 +26,7 @@ int broadcast(blue_diss_t* bd, void* msg) {
     return 0;
 }
 
-int receive(blue_diss* bd, void** msg, int* size) {
+int receive(blue_diss_t* bd, void** msg, int* size) {
     return 0;
 }
 
