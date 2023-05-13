@@ -1,7 +1,7 @@
 
-var getGetBoard = function(onSuccess, onError) {
+var getBoard = function(onSuccess, onError) {
   var xhr = new XMLHttpRequest();
-  xhr.open('GET', '/getBoard', true);
+  xhr.open('GET', '/board', true);
   xhr.setRequestHeader('Accept', 'application/json');
   xhr.onreadystatechange = function () {
     var res = null;

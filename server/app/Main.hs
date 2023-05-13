@@ -23,7 +23,6 @@ import Data.String
 import Data.Ord
 import Data.List (sortOn)
 import Control.Concurrent
-import qualified Data.Vector.Unboxed as V
 import qualified Data.Map as M
 import qualified Data.Set as S
 import Data.Text (Text, unpack, pack)
