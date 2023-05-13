@@ -1,0 +1,11 @@
+Protolude.Error error :: forall (r :: RuntimeRep) . forall (a :: TYPE r) . HasCallStack => Text -> a
+Protolude.Panic panic :: HasCallStack => Text -> a
+Data.GI.CodeGen.Util terror :: HasCallStack => Text -> a
+ClassyPrelude terror :: HasCallStack => Text -> a
+CorePrelude terror :: HasCallStack => Text -> a
+Universum.Debug error :: forall (r :: RuntimeRep) . forall (a :: TYPE r) . HasCallStack => Text -> a
+Control.Logging errorL :: Text -> a
+Control.Logging errorL' :: Text -> a
+Termonad.Prelude terror :: HasCallStack => Text -> a
+Data.Builder textToBuilder :: ToBuilder Text builder => Text -> builder
+-- plus more results not shown, pass --count=20 to see more
