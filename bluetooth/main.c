@@ -76,7 +76,7 @@ int server() {
     // bluetooth adapter
     loc_addr.l2_family = AF_BLUETOOTH;
     loc_addr.l2_bdaddr = *BDADDR_ANY;
-    loc_addr.l2_psm = htobs(0x1001);
+    loc_addr.l2_psm = htobs(0x7FFF);
 
     bind(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 
