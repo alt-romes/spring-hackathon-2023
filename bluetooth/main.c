@@ -49,8 +49,6 @@ int search() {
     close(sock);
 }
 
-
-
 int dynamic_bind_rc(int sock, struct sockaddr_rc *sockaddr, uint8_t *port) {
     int err;
     for( *port = 1; *port <= 31; *port++ ) {
@@ -86,6 +84,7 @@ int server() {
     listen(s, 1);
 
     // accept one connection
+    printf("Accepting bluetooth connections\n");
     client = accept(s, (struct sockaddr *)&rem_addr, &opt);
 
     ba2str(&rem_addr.l2_bdaddr, buf);
@@ -107,7 +106,7 @@ int server() {
 int client(char *destination) {
     struct sockaddr_l2 addr = { 0 };
     int s, status;
-    char *message = "hello!";
+    char *message = "hello david!";
     char dest[18];
     strncpy(dest, destination, 18);
 
@@ -131,7 +130,7 @@ int client(char *destination) {
     if(status < 0)
         perror("uh oh");
     else
-        printf("Message sent successfuly\n");
+        printf("Message sent successfuly, status %d\n", status);
 
     close(s);
 }
