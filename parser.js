@@ -59,12 +59,13 @@ function parse_fen(string) {
                 return;
             default:
                 num = parseInt(c);
-                currPos[0] += num;
+                currPos[1] += num;
                 break;
         }
     }
 }
 function drawPiece(piece, coords) {
+    console.log(coords[0] + "" + coords[1]);
     let piece_elem = document.getElementById(coords[0] + "" + coords[1]);
     piece_elem.innerText = piece;
 
