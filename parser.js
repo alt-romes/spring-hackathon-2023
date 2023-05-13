@@ -76,9 +76,11 @@ function drawPiece(piece, coords) {
 }
 function parse_header(string) {
     let split_header = string.split(" ");
-    let last_move = split_header[1];
+
+    let player_to_move = split_header[1];
     let castling = split_header[2];
-    let en_passant = split_header[3];
+    let last_move = split_header[3];
+    document.getElementById("lastplayed").innerText = last_move;
 }
 
 async function postData(url = "", data = {},params = {}) {
