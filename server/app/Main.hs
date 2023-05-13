@@ -13,8 +13,10 @@
 {-# LANGUAGE CPP #-}
 module Main where
 
-#define SLEEP_DELAY 20
+-- 20 seconds
+#define SLEEP_DELAY 20000000
 
+import Prelude hiding (log)
 import Data.Ord
 import Data.List (sortOn)
 import Control.Concurrent
@@ -70,9 +72,12 @@ type AppM = ReaderT State Handler
 server :: ServerT ChessAPI AppM
 server = getBoard :<|> joinGame :<|> vote
   where
-    getBoard = readTV . board =<< ask
+    getBoard = do
+      log "Received GET /getBoard"
+      readTV . board =<< ask
 
     joinGame uid = do
+      log "Received POST /joinGame"
       colorVar <- asks next_player
       color    <- readTV colorVar
       modifyTV colorVar opponent
@@ -85,6 +90,7 @@ server = getBoard :<|> joinGame :<|> vote
 
 
     vote plytext = do
+      log "Received POST /vote"
       pos <- readTV . board =<< ask
       case fromUCI pos (unpack plytext) of
         Nothing -> throwError $ err400{errBody =  "Move incorrectly formatted"}
@@ -107,6 +113,8 @@ main = do
   white_team  <- newTVarIO S.empty
   let state = State{..}
 
+  log "Initialized."
+
   _ <- forkIO (playGame state)
 
   run 8081 (serve api (hoistServer api (nt state) server))
@@ -127,21 +135,28 @@ playGame State{..} = do
   -- Sleep
   threadDelay SLEEP_DELAY
 
+  log "Making a move!"
+
   -- Compute next play
   votemap <- readTVarIO votes
-  let play = computePlay votemap
-
-  -- Update state
-  liftIO $ atomically do
-    board   `modifyTVar` (`doPly` play)
-    votes   `modifyTVar` const M.empty
-    playing `modifyTVar` opponent
+  case computePlay votemap of
+    Nothing ->
+      log "No votes at all, not making a move."
+    Just play -> do
+      -- Update state with the play
+      log ("Making the move " ++ show play)
+      liftIO $ atomically do
+        board   `modifyTVar` (`doPly` play)
+        votes   `modifyTVar` const M.empty
+        playing `modifyTVar` opponent
 
   -- Repeat
   playGame State{..}
 
-computePlay :: VoteMap -> Ply
-computePlay = fst . head . sortOn (Down . snd) . M.toList
+computePlay :: VoteMap -> Maybe Ply
+computePlay vs = case sortOn (Down . snd) $ M.toList vs of
+                   [] -> Nothing
+                   (ply,_):_ -> Just ply
 
 
 {---------------------
@@ -154,3 +169,5 @@ readTV = liftIO . readTVarIO
 modifyTV :: TVar a -> (a -> a) -> AppM ()
 modifyTV x = liftIO . atomically . modifyTVar x
 
+log :: MonadIO m => String -> m ()
+log = liftIO . putStrLn
