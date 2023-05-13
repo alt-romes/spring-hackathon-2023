@@ -69,6 +69,11 @@ function start_state() {
         }
     }
 
+
+    if(localStorage.getItem("uuid") === null)
+        localStorage.setItem("uuid", uuid());
+
+    console.log(localStorage.getItem("uuid"));
 }
 
 function reset_state() {
@@ -135,4 +140,10 @@ if (document.addEventListener) {
     document.addEventListener('click', callback, false);
 } else {
     document.attachEvent('onclick', callback);
+}
+
+function uuid() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }
