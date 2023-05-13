@@ -27,6 +27,8 @@ th {
     border: 5px solid black;
     /*padding 0;*/
     margin: 0;
+    min-width: 50px;
+    min-height: 50px;
 }
 
 tr {
