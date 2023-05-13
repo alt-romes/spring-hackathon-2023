@@ -1,0 +1,36 @@
+html,body {
+    height: 100%;
+    width: 100%;
+}
+
+body {
+    background: mediumturquoise;
+
+    overflow: hidden; /* Hide scrollbars */
+}
+
+.board {
+    margin: 0 auto;
+    position: relative;
+    top: 15%;
+
+    border: 4px solid black;
+    height: 500px;
+    width:  500px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+th {
+    border: 5px solid black;
+    /*padding 0;*/
+    margin: 0;
+}
+
+tr {
+    /*padding 0;*/
+    margin: 0;
+    font-size: 40px;
+}
