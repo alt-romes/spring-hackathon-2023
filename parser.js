@@ -1,5 +1,7 @@
+let curr_state = ""
 function parse_fen(string) {
-    currPos = [0, 0]
+    currPos = [7, 0]
+    curr_state = string;
     for (const c of string) {
         switch (c) {
             case 'r':
@@ -51,7 +53,7 @@ function parse_fen(string) {
                 currPos[1]++;
                 break;
             case '/':
-                currPos[0]++;
+                currPos[0]--;
                 currPos[1] = 0;
                 break;
             case ' ':
@@ -66,6 +68,10 @@ function parse_fen(string) {
                 break;
         }
     }
+}
+function attempt_move(prevPos,nextPos){
+    let files = ['a','b','c','d','e','f','g','h']
+    return files[prevPos[1]]+""+Math.abs(prevPos[0]-8)+files[nextPos[1]]+""+Math.abs(nextPos[0])
 }
 function drawPiece(piece, coords) {
     console.log(coords[0] + "" + coords[1]);
