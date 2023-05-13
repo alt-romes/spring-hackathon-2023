@@ -1,7 +1,13 @@
 
-var selected_piece;
+
+var hovered_piece = null;
+var selected_piece = null;
+var selected_piece_color = null;
 
 document.addEventListener('DOMContentLoaded', function() {
+    hovered_piece = null;
+    selected_piece = null;
+
     //On load
     var board = document.getElementById('table');
     console.log(board)
@@ -16,22 +22,36 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const th of tr.children) {
             if(last) {
                 th.style.background = color_white;
+                th.style.backgroundcolor = color_white;
                 hovercolor = 'green';
                 last = false;
                 th.onmouseleave = function() {
-                    this.style.background = color_white;
+                    if(this.id != selected_piece) 
+                        this.style.background = color_white;
+                    hovered_piece = null;
                 }
             } else {
                 th.style.background = color_black;
+                th.style.backgroundcolor = color_black;
                 hovercolor = 'blue';
                 last = true;
                 th.onmouseleave = function() {
-                    this.style.background = color_black;
+                    if(this.id != selected_piece) 
+                        this.style.background = color_black;
+                    hovered_piece = null;
+
                 }
             }
 
             th.onmouseover = function() {
-                this.style.background = hovercolor;
+                hovered_piece = this.id;
+
+                if(selected_piece != null && this.id == selected_piece) 
+                    this.style.background = 'pink';
+                else
+                    this.style.background = hovercolor;
+
+                console.log(this.id + " " + selected_piece);
             }
         }
     }
@@ -39,3 +59,25 @@ document.addEventListener('DOMContentLoaded', function() {
 }, false);
 
 
+function callback(e) {
+    if(hovered_piece != null) {
+        var piece;
+        if(selected_piece != null) {
+            piece = document.getElementById(selected_piece);
+            piece.style.background = piece.style.backgroundcolor;
+        }
+
+        //Get newly selected piece
+        selected_piece = hovered_piece;
+        piece = document.getElementById(selected_piece);
+        selected_piece_color = piece.style.background;
+        piece.style.background = 'pink';
+    }
+}
+
+
+if (document.addEventListener) {
+    document.addEventListener('click', callback, false);
+} else {
+    document.attachEvent('onclick', callback);
+}
