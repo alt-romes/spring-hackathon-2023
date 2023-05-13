@@ -18,7 +18,8 @@ function join() {
     postJoin({UserId:""+id},(okData)=>{console.log("Success,Assigning team as" + okData);team=okData},(errData)=>{console.log("Error")})
 }
 function vote(move, id) {
+    console.log(move)
     postVote({PlyText:move},
         (okData) =>{console.log("Success submiting vote.\nMove submited:" +move)},
-        (errData)=>{console.log("Error voting")})
+        (errData)=>{console.log("Error voting");reset_state()})
 }
