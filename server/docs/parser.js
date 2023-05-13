@@ -86,7 +86,7 @@ function parse_header(string) {
     let player_to_move = split_header[1];
     let castling = split_header[2];
     let last_move = split_header[3];
-    document.getElementById("lastplayed").innerText = last_move;
+    // document.getElementById("lastplayed").innerText = last_move;
 }
 
 async function postData(url = "", data = {},params = {}) {

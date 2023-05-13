@@ -85,6 +85,8 @@ ARG EXECUTABLE
 # Copy build artifact from a builder stage
 COPY --from=builder /build/server /app/$EXECUTABLE
 
+COPY ./docs/ /docs
+
 # ARG env isn't preserved, so we make another ENV
 ENV EXECUTABLE_ $EXECUTABLE
 
