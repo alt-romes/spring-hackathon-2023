@@ -71,7 +71,7 @@ function parse_fen(string) {
 }
 function attempt_move(prevPos,nextPos){
     let files = ['a','b','c','d','e','f','g','h']
-    return files[prevPos[1]]+""+Math.abs(prevPos[0]-8)+files[nextPos[1]]+""+Math.abs(nextPos[0])
+    return files[prevPos[1]]+""+Math.abs(prevPos[0]-8)+files[nextPos[1]]+""+Math.abs(nextPos[0]-8)
 }
 function drawPiece(piece, coords) {
     console.log(coords[0] + "" + coords[1]);
