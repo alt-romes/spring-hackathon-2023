@@ -22,3 +22,4 @@ function vote(move, id) {
         (okData) =>{console.log("Success submiting vote.\nMove submited:" +move)},
         (errData)=>{console.log("Error voting");reset_state()})
 }
+document.addEventListener('DOMContentLoaded',get_board,false);
