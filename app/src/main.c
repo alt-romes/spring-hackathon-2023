@@ -18,7 +18,16 @@ int peerCycle(blue_diss_t* diss){
         printf("Message received: %s\n",toRedirect->buf);
     }
 }
-int castCycle(char* msg){
+int castCycle(blue_diss_t* diss,char* msg){
+    while(1){
+        msg_t* toSend= alloc_msg(bufSize);
+        toSend->buf = msg;
+        int err = broadcast(diss,toSend);
+        if(err){
+            fprintf(stderr,"Error occurred while broadcasting %s",toSend);
+            break;
+        }
+    }
 }
 int main(int argc, char *argv[])
 {
@@ -67,7 +76,7 @@ int main(int argc, char *argv[])
         int resp = peerCycle(diss);
     }else{
         //Acting as broadcaster
-        int resp = castCycle(msg);
+        int resp = castCycle(diss,msg);
     }
     return 0;
 }
