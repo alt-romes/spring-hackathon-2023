@@ -5,7 +5,6 @@ var selected_piece = null;
 var selected_piece_color = null;
 var play_made = false; //Made a play, have to wait for response
 
-
 var old_selected_piece;
 var new_selected_piece;
 
@@ -143,12 +142,23 @@ function callback(e) {
 function populateTopmovesTable() {
 
     var data = [
-        { place: 1, move: "a3d4", number: 5 },
-        { place: 2, move: "b3c2", number: 4 },
-        { place: 3, move: "d3e2", number: 3 },
+        { place: 1, move: "a3d4", number: uuid() },
+        //{ place: 2, move: "b3c2", number: uuid() },
+        //{ place: 3, move: "d3e2", number: 3 },
     ];
 
     var tableBody = document.getElementById('topmovestable');
+    var max = 10;
+
+    var num_new_adittions = data.length;
+
+    for (const c of tableBody.children) {
+        if(tableBody.children.length + num_new_adittions > max && tableBody.children.length > 0) {
+            var last_index = tableBody.children.length - 1;
+            tableBody.removeChild(tableBody.children[last_index]);
+        }
+    }
+    console.log("Test: " + tableBody.children.length);
 
     // Loop through the data and create table rows dynamically
     for (var i = 0; i < data.length; i++) {
@@ -166,7 +176,8 @@ function populateTopmovesTable() {
         numberCell.textContent = data[i].number;
         row.appendChild(numberCell);
 
-        tableBody.appendChild(row);
+        //tableBody.appendChild(row);
+        tableBody.insertBefore(row, tableBody.firstChild);
     }
 }
 
