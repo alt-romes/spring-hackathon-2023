@@ -3,7 +3,7 @@ function get_board() {
     getGetBoard((okData) =>{
         console.log(okData)
         parse_fen(okData)
-    },(errData) =>{console.log("Error getting board\nerrData:" + errData)})
+    },(errData) =>{console.log("Error getting board\nerrData:");console.log(errData)})
 
 }
 function join() {
