@@ -59,7 +59,10 @@ function parse_fen(string) {
                 return;
             default:
                 num = parseInt(c);
-                currPos[1] += num;
+                for(let i =0;i<num;i++){
+                    drawPiece('⠀',currPos);
+                    currPos[1]++;
+                }
                 break;
         }
     }
