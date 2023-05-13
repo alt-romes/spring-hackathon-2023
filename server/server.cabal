@@ -82,7 +82,8 @@ executable server
                       aeson,
                       stm,
                       containers,
-                      atomic-counter
+                      atomic-counter,
+                      servant-js
 
     -- Directories containing source files.
     hs-source-dirs:   app
