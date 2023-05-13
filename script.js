@@ -17,6 +17,8 @@ function start_state() {
 
     populateTopmovesTable();
     setGameStatus();
+    displayTeam();
+
     old_selected_piece = null;
     new_selected_piece = null;
 
@@ -183,6 +185,12 @@ function setGameStatus() {
         stat.textContent = "playing";
         stat.style.color = "green";
     }
+}
+
+function displayTeam() {
+
+    var t = document.getElementById('teamd');
+    t.textContent = team;
 }
 
 
