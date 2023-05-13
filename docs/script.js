@@ -10,6 +10,7 @@ var old_selected_piece;
 var new_selected_piece;
 
 document.addEventListener('DOMContentLoaded', start_state, false);
+document.addEventListener('DOMContentLoaded',get_board,false);
 
 function start_state() {
     hovered_piece = null;
