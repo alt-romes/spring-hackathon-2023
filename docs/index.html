@@ -14,7 +14,13 @@
   </head>
 
   <body>
-    <div id="title">City Chess</div>
+
+
+    <div id="global">
+
+     <div id="table_and_title">
+     <div id="title">City Chess</div>
+
      <table id="table" class="board">
       <tr>
         <th id="00">♜</th>
@@ -104,50 +110,65 @@
         <th id="77">♖</th>
       </tr>
     </table>
-
-    <div style="margin:0 auto;position:relative;width:10%;top:5%">Last Move Played:
-      <span id="lastplayed"></span>
     </div>
 
+    <!--
     <div style="margin:0 auto;position:relative;width:10%;top:5%">
-      Team: <span id="teamd" style="display: inline;"></span>
+    //  Team: <span id="teamd" style="display: inline;"></span>
+    </div>
+    --!>
+
+    
+    <div id="info">
+
+        <!--
+        <div style="margin:0 auto;position:relative;top:5%">Last Move Played:
+          <span id="lastplayed"></span>
+        </div>
+        --!>
+
+        <div style="margin:0 auto;position:relative;top:5%">
+            Game Status: <span id="gstatus" style="display: inline;"></span>
+        </div>
+
+        <div style="margin:0 auto;position:relative;top:5%">
+          Game Status: <span id="gstatus" style="display: inline;"></span>
+        </div>
+
+        <div style="text-align: center; margin-top: 60px;">Most Voted Moves</div>
+
+        <table class="topmoves">
+          <thead>
+            <tr>
+                <td>Place</td>
+                <td>move</td>
+                <td>number of votes</td>
+            </tr>
+          </thead>
+          
+          <tbody id="topmovestable">
+              <!-- <tr>
+                  <td>1</td>
+                  <td>a3d4</td>
+                  <td>5</td>
+              </tr> 
+
+              <tr>
+                <td>2</td>
+                <td>b3c2</td>
+                <td>4</td>
+            </tr> 
+
+            <tr>
+              <td>3</td>
+              <td>d3e2</td>
+              <td>3</td>
+          </tr>  -->
+          </tbody>
+        </table>
     </div>
 
-    <div style="margin:0 auto;position:relative;width:10%;top:5%">
-      Game Status: <span id="gstatus" style="display: inline;"></span>
     </div>
-
-    <div style="text-align: center; margin-top: 60px;">Most Voted Moves</div>
-
-    <table class="topmoves">
-      <thead>
-        <tr>
-            <td>Place</td>
-            <td>move</td>
-            <td>number of votes</td>
-        </tr>
-      </thead>
-      
-      <tbody id="topmovestable">
-          <!-- <tr>
-              <td>1</td>
-              <td>a3d4</td>
-              <td>5</td>
-          </tr> 
-
-          <tr>
-            <td>2</td>
-            <td>b3c2</td>
-            <td>4</td>
-        </tr> 
-
-        <tr>
-          <td>3</td>
-          <td>d3e2</td>
-          <td>3</td>
-      </tr>  -->
-      </tbody>
-    </table>
 
     
       </body>

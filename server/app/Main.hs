@@ -54,6 +54,8 @@ type ChessAPI = "board" :> Get '[JSON] Position
                 "join" :> ReqBody '[JSON] UserId :> Post '[JSON] Color
                 :<|>
                 "vote" :> ReqBody '[JSON] VoteReq :> Post '[JSON] ()
+                :<|>
+                Raw -- Serve static directory /docs
 
 instance ToJSON Position where
   toJSON = String . pack . toFEN
@@ -78,7 +80,7 @@ type AppM = ReaderT State Handler
 
 
 server :: ServerT ChessAPI AppM
-server = getBoard :<|> joinGame :<|> vote
+server = getBoard :<|> joinGame :<|> vote :<|> serveDirectoryWebApp "../docs/"
   where
     getBoard = do
       log "Received GET /board"
