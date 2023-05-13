@@ -3,12 +3,12 @@
 
 FROM haskell:9.4 AS builder
 
-WORKDIR /build
+WORKDIR /build/server
 
 # cabal-install configuration
 # - we'll be in better control of the build environment, than with default config.
-COPY docker.cabal.config /build/cabal.config
-ENV CABAL_CONFIG /build/cabal.config
+COPY ./server/docker.cabal.config ./cabal.config
+ENV CABAL_CONFIG ./cabal.config
 
 # Update cabal-install database
 RUN cabal v2-update
@@ -20,7 +20,7 @@ RUN cabal v2-update
 
 # Add a .cabal file to build environment
 # - it's enough to build dependencies
-COPY *.cabal cabal.project /build/
+COPY ./server/*.cabal ./server/cabal.project ./
 
 # Build package dependencies first
 # - beware of https://github.com/haskell/cabal/issues/6106
@@ -28,7 +28,7 @@ RUN cabal v2-build -v1 --dependencies-only all
 
 # Add rest of the files into build environment
 # - remember to keep .dockerignore up to date
-COPY . /build
+COPY ./server /build/server/
 
 # An executable to build
 ARG EXECUTABLE
@@ -37,7 +37,7 @@ ARG EXECUTABLE
 RUN if [ -z "$EXECUTABLE" ]; then echo "ERROR: Empty $EXECUTABLE"; false; fi
 
 # BUILD!!!
-RUN cabal v2-build -v1 exe:$EXECUTABLE && cp $(cabal list-bin server) /build/server
+RUN cabal v2-build -v1 exe:$EXECUTABLE && cp $(cabal list-bin server) ./server
 
 # Copy build artifact to known directory
 # - todo arg
@@ -83,7 +83,7 @@ EXPOSE 8081
 ARG EXECUTABLE
 
 # Copy build artifact from a builder stage
-COPY --from=builder /build/server /app/$EXECUTABLE
+COPY --from=builder /build/server/server /app/$EXECUTABLE
 
 COPY ./docs/ /docs
 
