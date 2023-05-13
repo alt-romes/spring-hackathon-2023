@@ -4,11 +4,19 @@ var hovered_piece = null;
 var selected_piece = null;
 var selected_piece_color = null;
 var play_made = false; //Made a play, have to wait for response
-var selected = []; //List of selected pieces
 
-document.addEventListener('DOMContentLoaded', function() {
+
+var old_selected_piece;
+var new_selected_piece;
+
+document.addEventListener('DOMContentLoaded', start_state, false);
+
+function start_state() {
     hovered_piece = null;
     selected_piece = null;
+
+    old_selected_piece = null;
+    new_selected_piece = null;
 
     //On load
     var board = document.getElementById('table');
@@ -28,8 +36,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 last = false;
                 th.onmouseleave = function() {
                     if(this.id != selected_piece &&
-                        !(this.id in selected)) 
+                       this.id != new_selected_piece &&
+                       this.id != old_selected_piece)
                         this.style.background = color_white;
+
                     hovered_piece = null;
                 }
             } else {
@@ -39,7 +49,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 last = true;
                 th.onmouseleave = function() {
                     if(this.id != selected_piece &&
-                        !(this.id in selected)) 
+                       this.id != new_selected_piece &&
+                       this.id != old_selected_piece)
                         this.style.background = color_black;
 
                     hovered_piece = null;
@@ -50,10 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
             th.onmouseover = function() {
                 hovered_piece = this.id;
 
-                console.log(selected + " " + this.id);
-                if(!(this.id in selected)) 
-                    return;
-
                 if(selected_piece != null && this.id == selected_piece) 
                     this.style.background = 'pink';
                 else
@@ -62,18 +69,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-}, false);
+
+    if(localStorage.getItem("uuid") === null)
+        localStorage.setItem("uuid", uuid());
+
+    console.log(localStorage.getItem("uuid"));
+}
+
+function reset_state() {
+    start_state(); 
+    play_made = false;
+}
 
 
 function callback(e) {
-    var old_selected_piece = selected_piece;
-    var new_selected_piece;
+    old_selected_piece = selected_piece;
     
-    if(play_made)
-        return;
-
     //Check background coloring
-    if(hovered_piece != null) {
+    if(hovered_piece != null && !play_made) {
         var piece;
         piece = document.getElementById(selected_piece);
 
@@ -95,28 +108,31 @@ function callback(e) {
 
                 selected_piece = hovered_piece;
                 new_selected_piece = selected_piece;
-
-
-                selected = []; //List of selected pieces
-                selected.push(new_selected_piece);
             }
 
             if(old_selected_piece != null)  {
                 piece.style.background = 'pink';
 
                 new_selected_piece = hovered_piece;
-                selected.push(new_selected_piece);
                 selected_piece = null;
             }
 
         }
+
+
+        if(old_selected_piece != null) {
+            console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
+            selected_piece = null;
+            play_made = true;
+        }
+
     }
 
-    if(old_selected_piece != null) {
-        console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
-        selected_piece = null;
-        play_made = true;
+    if(hovered_piece == null) {
+        console.log("Clicked out!");
+        reset_state();
     }
+
 }
 
 
@@ -124,4 +140,10 @@ if (document.addEventListener) {
     document.addEventListener('click', callback, false);
 } else {
     document.attachEvent('onclick', callback);
+}
+
+function uuid() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
 }
