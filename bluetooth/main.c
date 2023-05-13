@@ -49,20 +49,6 @@ int search() {
     close(sock);
 }
 
-int dynamic_bind_rc(int sock, struct sockaddr_rc *sockaddr, uint8_t *port) {
-    int err;
-    for( *port = 1; *port <= 31; *port++ ) {
-        sockaddr->rc_channel = *port;
-        err = bind(sock, (struct sockaddr *)sockaddr, sizeof(sockaddr));
-        if( !err || errno == EINVAL ) break;
-    }
-    if( *port == 31 ) {
-        err = -1;
-        errno = EINVAL;
-    }
-    return err;
-}
-
 int server() {
     struct sockaddr_l2 loc_addr = { 0 }, rem_addr = { 0 };
     char buf[1024] = { 0 };
@@ -76,7 +62,8 @@ int server() {
     // bluetooth adapter
     loc_addr.l2_family = AF_BLUETOOTH;
     loc_addr.l2_bdaddr = *BDADDR_ANY;
-    loc_addr.l2_psm = htobs(0x7FFF);
+    //loc_addr.l2_psm = htobs(0x1001);
+    loc_addr.l2_psm = htobs(0);
 
     bind(s, (struct sockaddr *)&loc_addr, sizeof(loc_addr));
 
