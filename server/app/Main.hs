@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE MagicHash #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -8,16 +10,18 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE CPP #-}
 module Main where
 
-import GHC.Exts (RealWorld)
-import GHC.Generics
+#define SLEEP_DELAY 20
+
+import Data.Ord
+import Data.List (sortOn)
+import Control.Concurrent
 import qualified Data.Vector.Unboxed as V
 import qualified Data.Map as M
-import Control.Concurrent.Counter.Unlifted
-import Data.Coerce
-import Data.Maybe
-import Data.Text (Text, unpack)
+import qualified Data.Set as S
+import Data.Text (Text, unpack, pack)
 import Data.Proxy
 import Servant
 import Network.Wai.Handler.Warp
@@ -28,46 +32,84 @@ import Control.Monad.Reader
 
 import Game.Chess
 
+{---------------------
+    API
+---------------------}
+
 type PlyText = Text
+type UserId  = Text
 
-type ChessAPI = "vote" :> ReqBody '[JSON] PlyText :> Post '[JSON] (Maybe Text) -- If valid, returns Nothing, otherwise, returns the error message
-                -- :<|>:
-                -- "get" 
+type ChessAPI = "getBoard" :> Get '[JSON] Position
+                :<|>
+                "join" :> ReqBody '[JSON] UserId :> Post '[JSON] Color
+                :<|>
+                "vote" :> ReqBody '[JSON] PlyText :> Post '[JSON] ()
 
+instance ToJSON Position where
+  toJSON = String . pack . toFEN
 
--- instance FromJSON Ply where
---   parseJSON = withObject "Ply" $ \v -> fromJust . fromUCI <$> (v .: "ply")
+instance ToJSON Color where
+  toJSON = String . pack . show
 
 
 {---------------------
     Server
 ---------------------}
 
-data State = State { board :: TVar Position
-                   , votes :: TVar (M.Map Ply Int) -- Note: this map represents all the existing positions
-                                                   -- Would like use but no unlifted map for now (Counter RealWorld). Do the easy thing.
+type VoteMap = M.Map Ply Int
+data State = State { board       :: TVar Position
+                   , votes       :: TVar VoteMap -- Note: this map represents all valid next moves
+                   , playing     :: TVar Color
+                   , next_player :: TVar Color
+                   , black_team  :: TVar (S.Set UserId)
+                   , white_team  :: TVar (S.Set UserId)
                    }
 type AppM = ReaderT State Handler
 
 
 server :: ServerT ChessAPI AppM
-server plytext = vote
+server = getBoard :<|> joinGame :<|> vote
   where
-    vote = do
-      pos <- liftIO . readTVarIO . board =<< ask
+    getBoard = readTV . board =<< ask
+
+    joinGame uid = do
+      colorVar <- asks next_player
+      color    <- readTV colorVar
+      modifyTV colorVar opponent
+      (`modifyTV` S.insert uid) . what_team color =<< ask
+      pure color
+        where
+          what_team color = case color of
+                              Black -> black_team
+                              White -> white_team
+
+
+    vote plytext = do
+      pos <- readTV . board =<< ask
       case fromUCI pos (unpack plytext) of
-        Nothing -> pure (Just "Move incorrectly formatted")
+        Nothing -> throwError $ err400{errBody =  "Move incorrectly formatted"}
         Just ply
-          | not (ply `V.elem` legalPlies' pos) -> pure (Just "Illegal move")
+          | not (ply `V.elem` legalPlies' pos) -> throwError $ err400{errBody = "Illegal move"}
           | otherwise                          -> do
-            liftIO . atomically . (`modifyTVar` M.adjust (+1) ply) . votes =<< ask
-            pure Nothing
+            liftIO . atomically . (`modifyTVar` M.alter updateVote ply) . votes =<< ask
+            pure ()
+            where
+              updateVote = \case Nothing -> Just 1
+                                 Just y  -> Just (y+1)
 
 main :: IO ()
 main = do
-  initialPos <- newTVarIO startpos
-  initialLegalPlies <- newTVarIO (M.fromList $ map (,0) (legalPlies startpos))
-  run 8081 (serve api (hoistServer api (nt (State initialPos initialLegalPlies)) server))
+  board       <- newTVarIO startpos
+  votes       <- newTVarIO M.empty
+  playing     <- newTVarIO White
+  next_player <- newTVarIO White
+  black_team  <- newTVarIO S.empty
+  white_team  <- newTVarIO S.empty
+  let state = State{..}
+
+  _ <- forkIO (playGame state)
+
+  run 8081 (serve api (hoistServer api (nt state) server))
 
   where nt :: State -> (∀ a. AppM a -> Handler a)
         nt s x = runReaderT x s
@@ -75,4 +117,40 @@ main = do
         api :: Proxy ChessAPI
         api = Proxy
 
+{---------------------
+    Main Game
+---------------------}
+
+playGame :: State -> IO ()
+playGame State{..} = do
+
+  -- Sleep
+  threadDelay SLEEP_DELAY
+
+  -- Compute next play
+  votemap <- readTVarIO votes
+  let play = computePlay votemap
+
+  -- Update state
+  liftIO $ atomically do
+    board   `modifyTVar` (`doPly` play)
+    votes   `modifyTVar` const M.empty
+    playing `modifyTVar` opponent
+
+  -- Repeat
+  playGame State{..}
+
+computePlay :: VoteMap -> Ply
+computePlay = fst . head . sortOn (Down . snd) . M.toList
+
+
+{---------------------
+    Utils
+---------------------}
+
+readTV :: TVar a -> AppM a
+readTV = liftIO . readTVarIO
+
+modifyTV :: TVar a -> (a -> a) -> AppM ()
+modifyTV x = liftIO . atomically . modifyTVar x
 
