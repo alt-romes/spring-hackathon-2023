@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wno-orphans #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE BlockArguments #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE UnicodeSyntax #-}
@@ -17,6 +18,8 @@ module Main where
 #define SLEEP_DELAY 20000000
 
 import Prelude hiding (log)
+import GHC.Generics
+import Data.String
 import Data.Ord
 import Data.List (sortOn)
 import Control.Concurrent
@@ -41,11 +44,17 @@ import Game.Chess
 type PlyText = Text
 type UserId  = Text
 
-type ChessAPI = "getBoard" :> Get '[JSON] Position
+data VoteReq = VoteReq { uid :: UserId
+                       , ply :: PlyText
+                       } deriving (Generic)
+instance ToJSON VoteReq
+instance FromJSON VoteReq
+
+type ChessAPI = "board" :> Get '[JSON] Position
                 :<|>
                 "join" :> ReqBody '[JSON] UserId :> Post '[JSON] Color
                 :<|>
-                "vote" :> ReqBody '[JSON] PlyText :> Post '[JSON] ()
+                "vote" :> ReqBody '[JSON] VoteReq :> Post '[JSON] ()
 
 instance ToJSON Position where
   toJSON = String . pack . toFEN
@@ -60,11 +69,11 @@ instance ToJSON Color where
 
 type VoteMap = M.Map Ply Int
 data State = State { board       :: TVar Position
-                   , votes       :: TVar VoteMap -- Note: this map represents all valid next moves
+                   , votes       :: TVar VoteMap  -- Note: this map represents all valid next moves
+                   , has_played  :: TVar (S.Set UserId) -- List of users who have already played this round
                    , playing     :: TVar Color
                    , next_player :: TVar Color
-                   , black_team  :: TVar (S.Set UserId)
-                   , white_team  :: TVar (S.Set UserId)
+                   , teams       :: TVar (M.Map UserId Color)
                    }
 type AppM = ReaderT State Handler
 
@@ -73,44 +82,64 @@ server :: ServerT ChessAPI AppM
 server = getBoard :<|> joinGame :<|> vote
   where
     getBoard = do
-      log "Received GET /getBoard"
-      readTV . board =<< ask
+      log "Received GET /board"
+      board' <- readTV . board =<< ask
+      log ("Board: " ++ show board')
+      pure board'
 
     joinGame uid = do
       log "Received POST /joinGame"
-      colorVar <- asks next_player
-      color    <- readTV colorVar
-      modifyTV colorVar opponent
-      (`modifyTV` S.insert uid) . what_team color =<< ask
-      pure color
-        where
-          what_team color = case color of
-                              Black -> black_team
-                              White -> white_team
+
+      -- Ensure user is not yet registered
+      teams' <- readTV . teams =<< ask
+      case M.lookup uid teams' of
+        Just c  -> throwError $ err400{errBody = fromString $ "User " ++ show uid ++ " is already in team " ++ show c}
+        Nothing -> do
+
+          -- Get next color and update next color
+          colorVar <- asks next_player
+          color    <- readTV colorVar
+          modifyTV colorVar opponent
+
+          -- Store in map assigned color
+          (`modifyTV` M.insert uid color) . teams =<< ask
+          log ("Assigned " ++ show color ++ " to " ++ show uid)
+
+          pure color
 
 
-    vote plytext = do
-      log "Received POST /vote"
-      pos <- readTV . board =<< ask
-      case fromUCI pos (unpack plytext) of
-        Nothing -> throwError $ err400{errBody =  "Move incorrectly formatted"}
-        Just ply
-          | not (ply `V.elem` legalPlies' pos) -> throwError $ err400{errBody = "Illegal move"}
-          | otherwise                          -> do
-            liftIO . atomically . (`modifyTVar` M.alter updateVote ply) . votes =<< ask
-            pure ()
-            where
-              updateVote = \case Nothing -> Just 1
-                                 Just y  -> Just (y+1)
+    vote (VoteReq uid plytext) = do
+      log ("Received POST /vote by " ++ show uid)
+
+      -- Ensure hasn't played
+      has_played' <- readTV . has_played =<< ask
+      if uid `S.member` has_played'
+        then do
+          let errmsg = "User " ++ show uid ++ "has already voted!"
+          log errmsg
+          throwError $ err400{errBody= fromString errmsg}
+        else do
+          pos <- readTV . board =<< ask
+          case fromUCI pos (unpack plytext) of
+            Nothing  -> do
+              let errmsg = "Move " ++ show plytext ++ " is invalid or illegal!"
+              log errmsg
+              throwError $ err400{errBody = fromString errmsg}
+            Just ply -> do
+                log ("User " ++ show uid ++ " did " ++ show ply)
+                liftIO . atomically . (`modifyTVar` M.alter updateVote ply) . votes =<< ask
+                where
+                  updateVote = \case Nothing -> Just 1
+                                     Just y  -> Just (y+1)
 
 main :: IO ()
 main = do
   board       <- newTVarIO startpos
   votes       <- newTVarIO M.empty
+  has_played  <- newTVarIO S.empty
   playing     <- newTVarIO White
   next_player <- newTVarIO White
-  black_team  <- newTVarIO S.empty
-  white_team  <- newTVarIO S.empty
+  teams       <- newTVarIO M.empty
   let state = State{..}
 
   log "Initialized."
