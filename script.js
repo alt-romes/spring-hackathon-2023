@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     //On load
     var board = document.getElementById('table');
-    console.log(board)
     
     var last = true;
     var color_white = 'white';
@@ -50,8 +49,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.style.background = 'pink';
                 else
                     this.style.background = hovercolor;
-
-                console.log(this.id + " " + selected_piece);
             }
         }
     }
@@ -62,16 +59,27 @@ document.addEventListener('DOMContentLoaded', function() {
 function callback(e) {
     if(hovered_piece != null) {
         var piece;
+        piece = document.getElementById(selected_piece);
+
         if(selected_piece != null) {
-            piece = document.getElementById(selected_piece);
             piece.style.background = piece.style.backgroundcolor;
-        }
+        } 
+
 
         //Get newly selected piece
+        piece = document.getElementById(hovered_piece);
+
+        if(piece != null) {
+            character = piece.innerHTML;
+            if(character == 'ㅤ')  {
+                //Not a piece, abort
+                return;
+            }
+        }
         selected_piece = hovered_piece;
-        piece = document.getElementById(selected_piece);
         selected_piece_color = piece.style.background;
         piece.style.background = 'pink';
+
     }
 }
 
