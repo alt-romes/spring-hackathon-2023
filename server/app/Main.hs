@@ -15,10 +15,12 @@
 module Main where
 
 -- 20 seconds
-#define SLEEP_DELAY 20000000
+#define SLEEP_DELAY_MICROSECONDS 20000000
+#define SLEEP_DELAY_SECONDS 20
 
 import Prelude hiding (log)
 import GHC.Generics
+import Data.Time
 import Data.String
 import Data.Ord
 import Data.List (sortOn)
@@ -55,6 +57,8 @@ type ChessAPI = "board" :> Get '[JSON] Position
                 :<|>
                 "vote" :> ReqBody '[JSON] VoteReq :> Post '[JSON] ()
                 :<|>
+                "timeleft" :> Post '[JSON] NominalDiffTime
+                :<|>
                 Raw -- Serve static directory /docs
 
 instance ToJSON Position where
@@ -75,12 +79,13 @@ data State = State { board       :: TVar Position
                    , playing     :: TVar Color
                    , next_player :: TVar Color
                    , teams       :: TVar (M.Map UserId Color)
+                   , last_play   :: TVar UTCTime
                    }
 type AppM = ReaderT State Handler
 
 
 server :: ServerT ChessAPI AppM
-server = getBoard :<|> joinGame :<|> vote :<|> serveDirectoryWebApp "../docs/"
+server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> serveDirectoryWebApp "../docs/"
   where
     getBoard = do
       log "Received GET /board"
@@ -108,6 +113,13 @@ server = getBoard :<|> joinGame :<|> vote :<|> serveDirectoryWebApp "../docs/"
 
           pure color
 
+    timeleft = do
+      log "Received GET /timeleft"
+      now <- liftIO getCurrentTime
+      last' <- readTV . last_play =<< ask
+      let time_left = secondsToNominalDiffTime SLEEP_DELAY_SECONDS - (now `diffUTCTime` last')
+      log ("Time left: " ++ show time_left)
+      pure time_left
 
     vote (VoteReq uid plytext) = do
       log ("Received POST /vote by " ++ show uid)
@@ -141,6 +153,7 @@ main = do
   playing     <- newTVarIO White
   next_player <- newTVarIO White
   teams       <- newTVarIO M.empty
+  last_play   <- newTVarIO =<< getCurrentTime
   let state = State{..}
 
   log "Initialized."
@@ -163,7 +176,7 @@ playGame :: State -> IO ()
 playGame State{..} = do
 
   -- Sleep
-  threadDelay SLEEP_DELAY
+  threadDelay SLEEP_DELAY_MICROSECONDS
 
   log "Making a move!"
 
@@ -173,12 +186,15 @@ playGame State{..} = do
     Nothing ->
       log "No votes at all, not making a move."
     Just play -> do
+      now <- getCurrentTime
+
       -- Update state with the play
       log ("Making the move " ++ show play)
       liftIO $ atomically do
         board   `modifyTVar` (`doPly` play)
         votes   `modifyTVar` const M.empty
         playing `modifyTVar` opponent
+        last_play `writeTVar` now
 
   -- Repeat
   playGame State{..}
