@@ -1,4 +1,3 @@
-//White is 0, Black is 1
 let team = "";
 function get_board() {
     getGetBoard((okData) =>{
