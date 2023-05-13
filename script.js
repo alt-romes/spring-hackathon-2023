@@ -3,6 +3,8 @@
 var hovered_piece = null;
 var selected_piece = null;
 var selected_piece_color = null;
+var play_made = false; //Made a play, have to wait for response
+var selected = []; //List of selected pieces
 
 document.addEventListener('DOMContentLoaded', function() {
     hovered_piece = null;
@@ -25,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovercolor = 'green';
                 last = false;
                 th.onmouseleave = function() {
-                    if(this.id != selected_piece) 
+                    if(this.id != selected_piece &&
+                        !(this.id in selected)) 
                         this.style.background = color_white;
                     hovered_piece = null;
                 }
@@ -35,8 +38,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 hovercolor = 'blue';
                 last = true;
                 th.onmouseleave = function() {
-                    if(this.id != selected_piece) 
+                    if(this.id != selected_piece &&
+                        !(this.id in selected)) 
                         this.style.background = color_black;
+
                     hovered_piece = null;
 
                 }
@@ -44,6 +49,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
             th.onmouseover = function() {
                 hovered_piece = this.id;
+
+                console.log(selected + " " + this.id);
+                if(!(this.id in selected)) 
+                    return;
 
                 if(selected_piece != null && this.id == selected_piece) 
                     this.style.background = 'pink';
@@ -57,11 +66,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 function callback(e) {
+    var old_selected_piece = selected_piece;
+    var new_selected_piece;
+    
+    if(play_made)
+        return;
+
+    //Check background coloring
     if(hovered_piece != null) {
         var piece;
         piece = document.getElementById(selected_piece);
 
-        if(selected_piece != null) {
+        if(old_selected_piece == null && selected_piece != null) {
             piece.style.background = piece.style.backgroundcolor;
         } 
 
@@ -69,17 +85,37 @@ function callback(e) {
         //Get newly selected piece
         piece = document.getElementById(hovered_piece);
 
-        if(piece != null) {
+        if(piece != null) { //Hovered some piece
             character = piece.innerHTML;
-            if(character == 'ㅤ')  {
-                //Not a piece, abort
-                return;
-            }
-        }
-        selected_piece = hovered_piece;
-        selected_piece_color = piece.style.background;
-        piece.style.background = 'pink';
+            //First selected piece
+            if(character != 'ㅤ' && old_selected_piece == null)  {
+                //Not a piece
+                selected_piece_color = piece.style.background;
+                piece.style.background = 'pink';
 
+                selected_piece = hovered_piece;
+                new_selected_piece = selected_piece;
+
+
+                selected = []; //List of selected pieces
+                selected.push(new_selected_piece);
+            }
+
+            if(old_selected_piece != null)  {
+                piece.style.background = 'pink';
+
+                new_selected_piece = hovered_piece;
+                selected.push(new_selected_piece);
+                selected_piece = null;
+            }
+
+        }
+    }
+
+    if(old_selected_piece != null) {
+        console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
+        selected_piece = null;
+        play_made = true;
     }
 }
 
