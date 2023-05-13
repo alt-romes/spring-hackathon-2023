@@ -126,6 +126,7 @@ function callback(e) {
             console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
             selected_piece = null;
             play_made = true;
+            vote(attempt_move(old_selected_piece,new_selected_piece));
         }
 
     }
