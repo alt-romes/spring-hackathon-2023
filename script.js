@@ -9,7 +9,9 @@ var play_made = false; //Made a play, have to wait for response
 var old_selected_piece;
 var new_selected_piece;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', start_state, false);
+
+function start_state() {
     hovered_piece = null;
     selected_piece = null;
 
@@ -67,17 +69,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-}, false);
+}
+
+function reset_state() {
+    start_state(); 
+    play_made = false;
+}
 
 
 function callback(e) {
     old_selected_piece = selected_piece;
     
-    if(play_made)
-        return;
-
     //Check background coloring
-    if(hovered_piece != null) {
+    if(hovered_piece != null && !play_made) {
         var piece;
         piece = document.getElementById(selected_piece);
 
@@ -109,13 +113,21 @@ function callback(e) {
             }
 
         }
+
+
+        if(old_selected_piece != null) {
+            console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
+            selected_piece = null;
+            play_made = true;
+        }
+
     }
 
-    if(old_selected_piece != null) {
-        console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
-        selected_piece = null;
-        play_made = true;
+    if(hovered_piece == null) {
+        console.log("Clicked out!");
+        reset_state();
     }
+
 }
 
 
