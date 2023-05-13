@@ -4,7 +4,7 @@ html,body {
 }
 
 body {
-    background: mediumturquoise;
+    background: #48d1cc;
 
     overflow: hidden; /* Hide scrollbars */
 }
@@ -35,11 +35,11 @@ body {
     width:  500px;
 }
 
-table {
+table.board {
     border-collapse: collapse;
 }
 
-th {
+.board th {
     border: 5px solid black;
     /*padding 0;*/
     margin: 0;
@@ -47,12 +47,43 @@ th {
     min-height: 50px;
 }
 
-tr {
+.board tr {
     /*padding 0;*/
     margin: 0;
     font-size: 40px;
 }
 
-th:hover {
+.board th:hover {
     cursor: pointer;
+}
+
+.topmoves {
+
+   /* font-size: small; */
+   margin: 0 auto;
+   margin-top: 10px;
+}
+
+
+table.topmoves {
+    border-collapse: collapse;
+
+}
+
+.topmoves thead {
+    background-color: #999;
+}
+
+.topmoves th,td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #000;
+}
+
+.topmoves th {
+    background-color: #f2f2f2;
+}
+
+.topmoves tr:nth-child(even) {
+    background-color: #38a8a5;
 }

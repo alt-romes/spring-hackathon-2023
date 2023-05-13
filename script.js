@@ -15,6 +15,8 @@ function start_state() {
     hovered_piece = null;
     selected_piece = null;
 
+    populateTopmovesTable();
+    setGameStatus();
     old_selected_piece = null;
     new_selected_piece = null;
 
@@ -134,6 +136,53 @@ function callback(e) {
         reset_state();
     }
 
+}
+
+function populateTopmovesTable() {
+
+    var data = [
+        { place: 1, move: "a3d4", number: 5 },
+        { place: 2, move: "b3c2", number: 4 },
+        { place: 3, move: "d3e2", number: 3 },
+    ];
+
+    var tableBody = document.getElementById('topmovestable');
+
+    // Loop through the data and create table rows dynamically
+    for (var i = 0; i < data.length; i++) {
+        var row = document.createElement('tr');
+        
+        var placeCell = document.createElement('td');
+        placeCell.textContent = data[i].place;
+        row.appendChild(placeCell);
+
+        var moveCell = document.createElement('td');
+        moveCell.textContent = data[i].move;
+        row.appendChild(moveCell);
+
+        var numberCell = document.createElement('td');
+        numberCell.textContent = data[i].number;
+        row.appendChild(numberCell);
+
+        tableBody.appendChild(row);
+    }
+}
+
+function setGameStatus() {
+
+    var stat = document.getElementById('gstatus');
+
+    var waiting = false;
+
+    if(waiting) {
+
+        stat.textContent = "waiting for next move";
+        stat.style.color = "red";
+    }
+    else {
+        stat.textContent = "playing";
+        stat.style.color = "green";
+    }
 }
 
 
