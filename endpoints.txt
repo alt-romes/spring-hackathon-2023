@@ -5,12 +5,12 @@ Só há um jogo de cada vez.
 getBoard();
 
 @POST
-join(id) : boolean
+join(id) : 200 -> equipa; 400: bad request
 Adiciona um id ao jogo se este não existe:
 
 	1º hipótese -> está a decorrer um jogo e o id é adicionado à equipa com menos jogadores ou aleatoriamente
 	2º hipótese -> o jogo vai começar dentro de x segundos e adiciona o id a uma equipa.
 
 @POST
-vote(id, vote) : boolean
+vote(id, vote) : 200 -> sucesso; 400: bad request
 Faz um voto a partir de um id
