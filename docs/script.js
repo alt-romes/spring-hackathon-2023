@@ -78,6 +78,8 @@ function start_state() {
         localStorage.setItem("uuid", uuid());
 
     console.log(localStorage.getItem("uuid"));
+    join(localStorage.getItem("uuid"));
+
 }
 
 function reset_state() {

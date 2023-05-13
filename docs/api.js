@@ -3,7 +3,7 @@ var getBoard = function(onSuccess, onError) {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/board', true);
   xhr.setRequestHeader('Accept', 'application/json');
-  xhr.setRequestHeader('CORS','same-origin')
+  //xhr.setRequestHeader('CORS','same-origin')
   xhr.onreadystatechange = function () {
     var res = null;
     if (xhr.readyState === 4) {
