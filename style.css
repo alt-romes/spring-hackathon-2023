@@ -8,11 +8,27 @@ body {
 
     overflow: hidden; /* Hide scrollbars */
 }
+#title{
+    font-size: xx-large;
+    font-family:'Courier New', Courier, monospace;
+    font-weight: bold;
+    margin: 0 auto;
+    width: 14%;
+    position: relative;
+}
+#lastplayed{
+    font-size: larger;
+    font-family:'Courier New', Courier, monospace;
+    font-weight:bold;
+    margin:0 auto;
+    position:relative;
+    
+}
 
 .board {
     margin: 0 auto;
     position: relative;
-    top: 15%;
+    top: 5%;
 
     border: 4px solid black;
     height: 500px;
