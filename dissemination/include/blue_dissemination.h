@@ -9,7 +9,11 @@
 typedef struct msg {
     size_t size;
     char*  buf;
-    int timestamp;
+    time_t timestamp;
+
+    // When this message gets put in in_flight, how many more times must it be
+    // re-broadcasted
+    int    flight_n;
 } msg_t;
 
 typedef struct blue_diss {
@@ -37,7 +41,7 @@ blue_diss_t init(struct Config);
 
 int broadcast(blue_diss_t, msg_t* msg);
 
-int receive(blue_diss_t, msg_t* msg);
+int receive(blue_diss_t bd, msg_t* msg, size_t length);
 
 msg_t* alloc_msg(size_t size);
 
@@ -47,5 +51,10 @@ void free_msg(msg_t* msg);
 
 int blue_find(in_addr_t*, size_t);
 int blue_send(in_addr_t, char*, size_t);
+
+// Innards
+
+void* listen_thread(void* bd_v);
+void* in_flight_thread(void* bd_v);
 
 #endif
