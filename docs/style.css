@@ -93,6 +93,26 @@ table.topmoves {
     max-width: 500px;
 }
 
+@media only screen and (max-width: 500px) {
+    .board {
+        height:400px;
+        width: 400px;
+    }
+
+    #table_and_title {
+        max-width: 400px;
+    }
+
+    .board th {
+        min-width:  45px !important;
+        min-height: 45px !important;
+    }
+
+    .board tr {
+        font-size: 35px;
+    }
+}
+
 #info {
     color: black;
     display: flex;

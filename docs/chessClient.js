@@ -79,8 +79,12 @@ function vote(move, id) {
             console.log("Success submiting vote.\nMove submited:" +move)
         },
         err => {
+            // We could allow re-play if invalid move, but we currently don't.
+            // If you play an invalid move
             displayError(err);
-            if (board.dataset.selected.length < 4) // If move is set, errors after don't unset this.
+            if (err.includes("not in team"))
+                paintBoardBW(); // Not in team error, we don't want to keep the move set.
+            else if (board.dataset.selected.length < 4) // If move is set, errors after don't unset this.
                 paintBoardBW(); // Clear highlights/plays
         }
     )
