@@ -57,7 +57,9 @@ type ChessAPI = "board" :> Get '[JSON] Position
                 :<|>
                 "vote" :> ReqBody '[JSON] VoteReq :> Post '[JSON] ()
                 :<|>
-                "timeleft" :> Post '[JSON] NominalDiffTime
+                "timeleft" :> Get '[JSON] NominalDiffTime
+                :<|>
+                "playing" :> Get '[JSON] Color
                 :<|>
                 Raw -- Serve static directory /docs
 
@@ -85,7 +87,7 @@ type AppM = ReaderT State Handler
 
 
 server :: ServerT ChessAPI AppM
-server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> serveDirectoryWebApp "../docs/"
+server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> serveDirectoryWebApp "../docs/"
   where
     getBoard = do
       log "Received GET /board"
@@ -120,6 +122,10 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> serveDirectoryWebAp
       let time_left = secondsToNominalDiffTime SLEEP_DELAY_SECONDS - (now `diffUTCTime` last')
       log ("Time left: " ++ show time_left)
       pure time_left
+
+    getPlaying = do
+      log "Received GET /playing"
+      readTV . playing =<< ask
 
     vote (VoteReq uid plytext) = do
       log ("Received POST /vote by " ++ show uid)
