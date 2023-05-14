@@ -21,7 +21,6 @@ module Main where
 import Prelude hiding (log)
 import GHC.Generics
 import Data.Time
-import Data.String
 import Data.Ord
 import Data.List (sortOn)
 import Control.Concurrent
@@ -248,5 +247,5 @@ readHasPlayed = readTV . has_played =<< ask
 fail400 :: String -> AppM a
 fail400 s = do
   log s
-  throwError $ err400{errBody=fromString s}
+  throwError $ err400{errBody=encode s}
 

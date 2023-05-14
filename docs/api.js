@@ -12,7 +12,7 @@ var getBoard = function(onSuccess, onError) {
         try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onSuccess(res);
       } else {
-        try { res = xhr.responseText; } catch (e) { onError(e); }
+        try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onError(res);
       }
     }
@@ -34,7 +34,7 @@ var postJoin = function(body, onSuccess, onError) {
         try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onSuccess(res);
       } else {
-        try { console.log(xhr.response); res = xhr.responseText; } catch (e) { onError(e); }
+        try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onError(res);
       }
     }
@@ -56,7 +56,7 @@ var postVote = function(body, onSuccess, onError) {
         try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onSuccess(res);
       } else {
-        try { res = xhr.responseText; } catch (e) { onError(e); }
+        try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onError(res);
       }
     }
@@ -77,7 +77,7 @@ var getTimeleft = function(onSuccess, onError) {
         try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onSuccess(res);
       } else {
-        try { res = xhr.responseText; } catch (e) { onError(e); }
+        try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onError(res);
       }
     }
@@ -98,7 +98,7 @@ var getPlaying = function(onSuccess, onError) {
         try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onSuccess(res);
       } else {
-        try { res = xhr.responseText; } catch (e) { onError(e); }
+        try { res = JSON.parse(xhr.responseText); } catch (e) { onError(e); }
         if (res) onError(res);
       }
     }

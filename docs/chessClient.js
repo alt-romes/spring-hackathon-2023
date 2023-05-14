@@ -5,6 +5,8 @@ const time_left_html = document.querySelector("#timeswitch")
 const team_html = document.querySelector("#myteam")
 const stat_html = document.querySelector("#gstatus")
 
+// NOTE: Ignore the XMLParse errors, they still pass on the things as needed
+
 function update_board() {
     getBoard((okData) =>{
 
@@ -86,7 +88,7 @@ function update_time_left() {
 }
 
 function clearHighlights() {
-    // Stub
+    // Stub; TODO
 }
 
 function displayError(errData) {
