@@ -151,6 +151,7 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> ser
             Just ply -> do
                 log ("User " ++ show uid ++ " did " ++ show ply)
                 liftIO . atomically . (`modifyTVar` M.alter updateVote ply) . votes =<< ask
+                liftIO . atomically . (`modifyTVar` S.insert uid) . has_played =<< ask
                 where
                   updateVote = \case Nothing -> Just 1
                                      Just y  -> Just (y+1)
