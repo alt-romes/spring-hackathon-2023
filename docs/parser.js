@@ -74,7 +74,7 @@ function attempt_move(prevPos,nextPos){
     return files[prevPos[1]]+""+Math.abs(prevPos[0]-8)+files[nextPos[1]]+""+Math.abs(nextPos[0]-8)
 }
 function drawPiece(piece, coords) {
-    console.log(coords[0] + "" + coords[1]);
+    //console.log(coords[0] + "" + coords[1]);
     let piece_elem = document.getElementById(coords[0] + "" + coords[1]);
     piece_elem.innerText = piece;
 
