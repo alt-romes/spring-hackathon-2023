@@ -15,14 +15,13 @@ function start_state() {
     selected_piece = null;
 
     populateTopmovesTable();
-    updateInfo();
 
     old_selected_piece = null;
     new_selected_piece = null;
-
-    //On load
-    var board = document.getElementById('table');
     
+    // On load
+    var board = document.getElementById('table');
+
     var last = true;
     var color_white = 'white';
     var color_black = 'lightblue';
@@ -75,7 +74,6 @@ function start_state() {
     if(localStorage.getItem("uuid") === null)
         localStorage.setItem("uuid", uuid());
 
-    console.log(localStorage.getItem("uuid"));
     join(localStorage.getItem("uuid"));
 
 }
@@ -135,7 +133,6 @@ function callback(e) {
 
     if(hovered_piece == null) {
         console.log("Clicked out!");
-        reset_state();
     }
 
 }
@@ -179,33 +176,6 @@ function populateTopmovesTable() {
         //tableBody.appendChild(row);
         tableBody.insertBefore(row, tableBody.firstChild);
     }
-}
-
-
-function updateInfo() {
-
-    var stat = document.getElementById('gstatus');
-
-    var waiting = true;
-
-    if(waiting) {
-
-        stat.textContent = "Wait for next move";
-        stat.style.color = "red";
-    }
-    else {
-        stat.textContent = "Suggest Move";
-        stat.style.color = "green";
-    }
-
-    var t = document.getElementById('myteam');
-    t.textContent = myteam;
-
-    t = document.getElementById('playingteam');
-    t.textContent = playingteam;
-
-    t = document.getElementById('timeswitch');
-    t.textContent = timeleft + " seconds";
 }
 
 

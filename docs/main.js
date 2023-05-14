@@ -1,19 +1,19 @@
+const timeInterval = 5000;
 
-var timeInterval = 5000;
+setInterval(() => {
 
-var lastBoard = "";
+    update_board();
+    update_playing_team();
+    update_time_left();
 
+    // if(lastBoard != res && !was_error)
+    //     reset_state();
 
+    // if(was_error)
+    //     alert("Error: " + res);
 
-var intervalId = setInterval(function() {
-    get_board();
-
-    if(lastBoard != res)
-        reset_state();
-
-    lastBoard = res;
-
-    playingteam = get_playing_team();
-    timeleft = get_time_left();
-    
 }, timeInterval);
+
+update_board();
+update_playing_team();
+update_time_left();

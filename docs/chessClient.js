@@ -1,59 +1,78 @@
-let myteam = "";
-let playingteam = "";
-let timeleft = 0;
-let res = "";
+const board_html = document.querySelector("#table")
+const error_html = document.querySelector("#error")
+const playing_html = document.querySelector("#playingteam")
+const time_left_html = document.querySelector("#timeswitch")
+const team_html = document.querySelector("#myteam")
+const stat_html = document.querySelector("#gstatus")
 
-function get_board() {
+function update_board() {
     getBoard((okData) =>{
+
         console.log(okData)
 
-        if(res != okData)
-            parse_fen(okData)
+        if (board_html.dataset.position != okData)
+            parse_fen_and_update(okData)
 
-        res = okData;
-        was_error = false;
-
-    },(errData) =>{
-        alert(errData);
-    })
+    }, displayError)
 }
 
 function join(uuid) {
-    postJoin(uuid,(okData)=>{console.log("Success,Assigning team as" + okData);myteam=okData},(errData)=>{console.log("Error")})
+    postJoin(uuid,(okData)=>{
+        console.log("Success,Assigning team as" + okData);
+        team_html.innerHTML = okData;
+        team_html.dataset.value = okData;
+    }, displayError)
 }
+
 function vote(move, id) {
     console.log(move)
     postVote({uid:id,ply:move},
-        (okData) =>{console.log("Success submiting vote.\nMove submited:" +move)},
-        (errData)=>{console.log("Error voting");
-    })
+        (okData) =>{
+            console.log("Success submiting vote.\nMove submited:" +move)
+        },
+        displayError
+    )
 }
-document.addEventListener('DOMContentLoaded',get_board,false);
 
 
-
-function get_playing_team() {
-
-    var pt = "";
+function update_playing_team() {
 
     getPlaying(
+        (okData) => {
+            playing_html.innerHTML = okData;
 
-        (okData) =>{ pt = okData },
-        (errData)=>{console.log("Error getting playing team")}
+            myteam = team_html.dataset.value;
+
+            var waiting = myteam != okData;
+
+            if(waiting) {
+                stat_html.textContent = "Wait for next move";
+                stat_html.style.color = "red";
+            }
+            else {
+                stat_html.textContent = "Suggest Move";
+                stat_html.style.color = "green";
+            }
+        },
+        displayError
     );
 
-    return pt;
 }
 
-function get_time_left() {
+function update_time_left() {
 
-    var tl = 0;
+    getTimeleft(
 
-    getPlaying(
-
-        (okData) =>{ tl = okData },
-        (errData)=>{console.log("Error getting time left")}
+        (okData) =>{ time_left_html.innerHTML = okData + " seconds" }, // TODO: this should be interpolated by the frontend or something
+        displayError
     );
 
-    return tl;
 }
+
+/* Util */
+
+function displayError(errData) {
+        error_html.innerHTML = errData
+        setTimeout(() => error_html.innerHTML = "", 3000)
+}
+

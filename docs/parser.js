@@ -1,7 +1,5 @@
-let curr_state = ""
-function parse_fen(string) {
+function parse_fen_and_update(string) {
     currPos = [0, 0]
-    curr_state = string;
     for (const c of string) {
         switch (c) {
             case 'R':
@@ -89,20 +87,3 @@ function parse_header(string) {
     // document.getElementById("lastplayed").innerText = last_move;
 }
 
-async function postData(url = "", data = {},params = {}) {
-    // Default options are marked with *
-    const response = await fetch(url, {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
-      headers: {
-        "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(data), // body data type must match "Content-Type" header
-    });
-    return response.json(); // parses JSON response into native JavaScript objects
-  }
