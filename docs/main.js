@@ -1,4 +1,7 @@
 
+var timeInterval = 5000;
+
 var intervalId = setInterval(function() {
-  console.log("Interval reached every 5s")
-}, 5000);
+  get_board();
+
+}, timeInterval);
