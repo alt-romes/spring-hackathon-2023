@@ -2,6 +2,7 @@ let myteam = "";
 let playingteam = "";
 let timeleft = 0;
 let res = "";
+let was_error = false;
 
 function get_board() {
     getBoard((okData) =>{
@@ -11,11 +12,11 @@ function get_board() {
             parse_fen(okData)
 
         res = okData;
+        was_error = false;
 
     },(errData) =>{
-        //console.log("Error getting board\nerrData:");
-        //console.log(errData)
-        res = "error";
+        res = errData;
+        was_error = true;
     })
 }
 
