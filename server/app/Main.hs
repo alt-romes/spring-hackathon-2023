@@ -50,6 +50,13 @@ data VoteReq = VoteReq { uid :: UserId
 instance ToJSON VoteReq
 instance FromJSON VoteReq
 
+data TopVote = TopVote { place :: Int
+                       , move  :: PlyText
+                       , number :: Int
+                       } deriving (Generic)
+instance ToJSON TopVote
+instance FromJSON TopVote
+
 type ChessAPI = "board" :> Get '[JSON] Position
                 :<|>
                 "join" :> ReqBody '[JSON] UserId :> Post '[JSON] Color
@@ -59,6 +66,8 @@ type ChessAPI = "board" :> Get '[JSON] Position
                 "timeleft" :> Get '[JSON] NominalDiffTime
                 :<|>
                 "playing" :> Get '[JSON] Color
+                :<|>
+                "topvotes" :> Capture "n" Int :> Get '[JSON] [TopVote]
                 :<|>
                 Raw -- Serve static directory /docs
 
@@ -86,7 +95,7 @@ type AppM = ReaderT State Handler
 
 
 server :: ServerT ChessAPI AppM
-server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> serveDirectoryWebApp "../docs/"
+server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> topVotes :<|> serveDirectoryWebApp "../docs/"
   where
     getBoard = do
       log "Received GET /board"
@@ -124,7 +133,12 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> ser
 
     getPlaying = do
       log "Received GET /playing"
-      readTV . playing =<< ask
+      readPlaying
+
+    topVotes howmany = do
+      log "Received GET /topvotes/:n"
+      votemap <- readTV . votes =<< ask
+      pure $ take howmany $ zipWith (\(ply,n) i -> TopVote i (pack $ toUCI ply) n) (sortByVotes votemap) [1..]
 
     vote (VoteReq uid plytext) = do
       log ("Received POST /vote by " ++ show uid)
@@ -214,9 +228,12 @@ playGame State{..} = do
   playGame State{..}
 
 computePlay :: VoteMap -> Maybe Ply
-computePlay vs = case sortOn (Down . snd) $ M.toList vs of
+computePlay vs = case sortByVotes vs of
                    [] -> Nothing
                    (ply,_):_ -> Just ply
+
+sortByVotes :: VoteMap -> [(Ply,Int)]
+sortByVotes = sortOn (Down . snd) . M.toList
 
 
 {---------------------

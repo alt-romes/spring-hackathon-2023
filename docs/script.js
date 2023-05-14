@@ -80,9 +80,6 @@ function start_state() {
     }
 }
 
-// function clear_highlights() {
-// }
-
 function reset_state() {
     start_state(); 
     play_made = false;
