@@ -5,6 +5,7 @@ setInterval(() => {
     update_board();
     update_playing_team();
     update_time_left();
+    getTopMoves();
 
 }, timeInterval);
 

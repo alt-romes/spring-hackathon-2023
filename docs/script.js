@@ -25,7 +25,7 @@ function start_state() {
     hovered_piece = null;
     selected_piece = null;
 
-    populateTopmovesTable();
+    //populateTopmovesTable();
 
     old_selected_piece = null;
     new_selected_piece = null;
