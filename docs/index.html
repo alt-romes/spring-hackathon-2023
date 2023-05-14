@@ -16,7 +16,7 @@
             <div id="table_and_title">
                 <div id="title">City Chess</div>
 
-                <table id="table" class="board" data-position="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1">
+                <table id="table" class="board" data-position="">
                     <tr>
                         <th id="00">ㅤ</th>
                         <th id="01">ㅤ</th>
@@ -105,7 +105,7 @@
                         <th id="77">ㅤ</th>
                     </tr>
                 </table>
-                <div style="text-align:center;padding: 0.7rem 0.05rem;background:#c9261a;border: 2px solid black; box-shadow: 0px 0px 1px 1px black;"><strong style="color:whitesmoke;" id="error">bruh bruh error bruh</strong></div>
+                <div id="error-wrapper" hidden style="text-align:center;padding: 0.7rem 0.05rem;background:#c9261a;border: 2px solid black; box-shadow: 0px 0px 1px 1px black;"><strong style="color:whitesmoke;" id="error"></strong></div>
             </div>
 
             <!--
@@ -172,11 +172,11 @@
 
         </div>
 
+        <script type="text/javascript" src="api.js"></script>
+        <script type="text/javascript" src="parser.js"></script>
+        <script type="text/javascript" src="chessClient.js"></script>
+        <script type="text/javascript" src="script.js"></script>
+        <script type="text/javascript" src="main.js"></script>
 
     </body>
-    <script src="script.js"></script>
-    <script src="api.js"></script>
-    <script src="chessClient.js"></script>
-    <script src="parser.js"></script>
-    <script src="main.js"></script>
 </html>

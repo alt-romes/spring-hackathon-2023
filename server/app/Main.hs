@@ -109,7 +109,7 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> top
       -- Ensure user is not yet registered
       teams' <- readTeams
       case M.lookup uid teams' of
-        Just c  -> fail400 ("User " ++ show uid ++ " is already in team " ++ show c)
+        Just c  -> fail400 ("User " ++ unpack uid ++ " is already in team " ++ show c)
         Nothing -> do
 
           -- Get next color and update next color
@@ -147,20 +147,20 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> top
       curr_team <- readPlaying
       teams'    <- readTeams
       case M.lookup uid teams' of
-        Nothing -> fail400 ("User " ++ show uid ++ " has not joined!")
+        Nothing -> fail400 ("User " ++ unpack uid ++ " has not joined!")
         Just player_col -> when (curr_team /= player_col) $
-                            fail400 ("User " ++ show uid ++ " not in team " ++ show curr_team)
+                            fail400 ("User " ++ unpack uid ++ " not in team " ++ show curr_team)
 
       -- Ensure hasn't played
       has_played' <- readHasPlayed
       if uid `S.member` has_played'
         then
-          fail400 ("User " ++ show uid ++ "has already voted!")
+          fail400 ("User " ++ unpack uid ++ "has already voted!")
         else do
           pos <- readBoard
           case fromUCI pos (unpack plytext) of
             Nothing  ->
-              fail ("Move " ++ show plytext ++ " is invalid or illegal!")
+              fail400 ("Move " ++ show plytext ++ " is invalid or illegal!")
             Just ply -> do
                 log ("User " ++ show uid ++ " did " ++ show ply)
                 liftIO . atomically . (`modifyTVar` M.alter updateVote ply) . votes =<< ask

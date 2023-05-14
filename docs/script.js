@@ -8,140 +8,35 @@ var play_made = false; //Made a play, have to wait for response
 var old_selected_piece;
 var new_selected_piece;
 
-const board = document.getElementById('table');
+// Join
+if(localStorage.getItem("uuid") === null)
+    localStorage.setItem("uuid", uuid());
 
-window.onload = () => {
+// Join will set things correctly, whether it's an old join or a returning join
+join(localStorage.getItem("uuid"));
 
-    if(localStorage.getItem("uuid") === null)
-        localStorage.setItem("uuid", uuid());
-
-    // Join will set things correctly, whether it's an old join or a returning join
-    join(localStorage.getItem("uuid"));
-}
-
-document.addEventListener('DOMContentLoaded', start_state, false);
-
-function start_state() {
-    hovered_piece = null;
-    selected_piece = null;
-
-    //populateTopmovesTable();
-
-    old_selected_piece = null;
-    new_selected_piece = null;
-    
-
-    var last = true;
-    var color_white = 'white';
-    var color_black = 'lightblue';
-    for (const tr of board.children[0].children) {
-        //Each tr
-        last = !last;
-        var hovercolor;
-        for (const th of tr.children) {
-            if(last) {
-                th.style.background = color_white;
-                th.style.backgroundcolor = color_white;
-                hovercolor = 'green';
-                last = false;
-                th.onmouseleave = function() {
-                    if(this.id != selected_piece &&
-                       this.id != new_selected_piece &&
-                       this.id != old_selected_piece)
-                        this.style.background = color_white;
-
-                    hovered_piece = null;
-                }
-            } else {
-                th.style.background = color_black;
-                th.style.backgroundcolor = color_black;
-                hovercolor = 'blue';
-                last = true;
-                th.onmouseleave = function() {
-                    if(this.id != selected_piece &&
-                       this.id != new_selected_piece &&
-                       this.id != old_selected_piece)
-                        this.style.background = color_black;
-
-                    hovered_piece = null;
-
-                }
+// Board setup (clean state)
+paintBoardBW();
+// Set hover event listeners on all squares
+const hovercolor = 'blue';
+for (const tr of board.children[0].children) {
+    for (const th of tr.children) {
+        th.onmouseleave = function () {
+            this.style.background = this.dataset.selected == "true" ? 'pink' : this.dataset.color;
+        }
+        th.onmouseover = function() {
+            this.style.background = this.dataset.selected == "true" ? 'pink' : hovercolor;
+        }
+        th.onclick = function() {
+            if (board.dataset.selected.length < 3) {
+                board.dataset.selected += this.id;
+                this.dataset.selected = true;
             }
-
-            th.onmouseover = function() {
-                hovered_piece = this.id;
-
-                if(selected_piece != null && this.id == selected_piece) 
-                    this.style.background = 'pink';
-                else
-                    this.style.background = hovercolor;
-            }
+            if (board.dataset.selected.length >= 4)
+                vote(attempt_move(board.dataset.selected[0]+board.dataset.selected[1],board.dataset.selected[2]+board.dataset.selected[3]),localStorage.getItem("uuid"));
+                // The board selected will be updated on board according to the votes
         }
     }
-}
-
-function reset_state() {
-    start_state(); 
-    play_made = false;
-}
-
-
-function onclick_anywhere(e) {
-    old_selected_piece = selected_piece;
-    
-    //Check background coloring
-    if(hovered_piece != null && !play_made) {
-        var piece;
-        piece = document.getElementById(selected_piece);
-
-        if(old_selected_piece == null && selected_piece != null) {
-            piece.style.background = piece.style.backgroundcolor;
-        } 
-
-
-        //Get newly selected piece
-        piece = document.getElementById(hovered_piece);
-
-        if(piece != null) { //Hovered some piece
-            character = piece.innerHTML;
-            //First selected piece
-            if(character != 'ㅤ' && old_selected_piece == null)  {
-                //Not a piece
-                selected_piece_color = piece.style.background;
-                piece.style.background = 'pink';
-
-                selected_piece = hovered_piece;
-                new_selected_piece = selected_piece;
-
-                //Remove on mouse over function
-                piece.onmouseover = function() { };
-            }
-
-            if(old_selected_piece != null)  {
-                piece.style.background = 'pink';
-
-                new_selected_piece = hovered_piece;
-                selected_piece = null;
-
-                piece.onmouseover = function() { };
-            }
-
-        }
-
-
-        if(old_selected_piece != null) {
-            console.log("Made move, from " + old_selected_piece + " to " + new_selected_piece);
-            selected_piece = null;
-            play_made = true;
-            vote(attempt_move(old_selected_piece,new_selected_piece),localStorage.getItem("uuid"));
-        }
-
-    }
-
-    if(hovered_piece == null) {
-        console.log("Clicked out!");
-    }
-
 }
 
 function populateTopmovesTable(moves) {
@@ -150,10 +45,6 @@ function populateTopmovesTable(moves) {
     if(moves == undefined){
         data = [];
     }
-        //{ place: 1, move: "a3d4", number: 1 },
-        //{ place: 2, move: "b3c2", number: uuid() },
-        //{ place: 3, move: "d3e2", number: 3 },
-    //];
 
     var tableBody = document.getElementById('topmovestable');
 
@@ -189,7 +80,7 @@ function populateTopmovesTable(moves) {
 }
 
 
-document.addEventListener('click', onclick_anywhere, false);
+// document.addEventListener('click', onclick_anywhere, false);
 
 function uuid() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
