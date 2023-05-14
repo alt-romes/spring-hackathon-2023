@@ -200,13 +200,13 @@ function updateInfo() {
     }
 
     var t = document.getElementById('myteam');
-    t.textContent = team;
+    t.textContent = myteam;
 
     t = document.getElementById('playingteam');
-    t.textContent = "black";
+    t.textContent = playingteam;
 
     t = document.getElementById('timeswitch');
-    t.textContent = "50 seconds";
+    t.textContent = timeleft + " seconds";
 }
 
 

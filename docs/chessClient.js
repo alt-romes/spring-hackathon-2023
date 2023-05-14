@@ -1,4 +1,6 @@
-let team = "";
+let myteam = "";
+let playingteam = "";
+let timeleft = 0;
 
 function get_board() {
     getBoard((okData) =>{
@@ -8,7 +10,7 @@ function get_board() {
 
 }
 function join(uuid) {
-    postJoin(uuid,(okData)=>{console.log("Success,Assigning team as" + okData);team=okData},(errData)=>{console.log("Error")})
+    postJoin(uuid,(okData)=>{console.log("Success,Assigning team as" + okData);myteam=okData},(errData)=>{console.log("Error")})
 }
 function vote(move, id) {
     console.log(move)
@@ -17,3 +19,31 @@ function vote(move, id) {
         (errData)=>{console.log("Error voting");reset_state()})
 }
 document.addEventListener('DOMContentLoaded',get_board,false);
+
+
+
+function get_playing_team() {
+
+    var pt = "";
+
+    getPlaying(
+
+        (okData) =>{ pt = okData },
+        (errData)=>{console.log("Error getting playing team")}
+    );
+
+    return pt;
+}
+
+function get_time_left() {
+
+    var tl = 0;
+
+    getPlaying(
+
+        (okData) =>{ tl = okData },
+        (errData)=>{console.log("Error getting time left")}
+    );
+
+    return tl;
+}
