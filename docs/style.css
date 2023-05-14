@@ -118,4 +118,7 @@ table.topmoves {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    padding: 1rem;
+    border: 4px solid black;
+    background-color: white;
 }
