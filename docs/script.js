@@ -15,8 +15,7 @@ function start_state() {
     selected_piece = null;
 
     populateTopmovesTable();
-    setGameStatus();
-    displayTeam();
+    setInfo();
 
     old_selected_piece = null;
     new_selected_piece = null;
@@ -142,13 +141,13 @@ function callback(e) {
 function populateTopmovesTable() {
 
     var data = [
-        { place: 1, move: "a3d4", number: uuid() },
+        { place: 1, move: "a3d4", number: 1 },
         //{ place: 2, move: "b3c2", number: uuid() },
         //{ place: 3, move: "d3e2", number: 3 },
     ];
 
     var tableBody = document.getElementById('topmovestable');
-    var max = 10;
+    var max = 5;
 
     var num_new_adittions = data.length;
 
@@ -181,27 +180,30 @@ function populateTopmovesTable() {
     }
 }
 
-function setGameStatus() {
+function setInfo() {
 
     var stat = document.getElementById('gstatus');
 
-    var waiting = false;
+    var waiting = true;
 
     if(waiting) {
 
-        stat.textContent = "waiting for next move";
+        stat.textContent = "Wait for next move";
         stat.style.color = "red";
     }
     else {
-        stat.textContent = "playing";
+        stat.textContent = "Suggest Move";
         stat.style.color = "green";
     }
-}
 
-function displayTeam() {
+    var t = document.getElementById('myteam');
+    t.textContent = "black";
 
-    //var t = document.getElementById('teamd');
-    //t.textContent = team;
+    t = document.getElementById('playingteam');
+    t.textContent = "black";
+
+    t = document.getElementById('timeswitch');
+    t.textContent = "50 seconds";
 }
 
 
