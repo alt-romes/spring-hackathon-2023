@@ -18,10 +18,23 @@ function update_board() {
 
 function join(uuid) {
     postJoin(uuid,(okData)=>{
-        console.log("Success,Assigning team as" + okData);
+        console.log("Success,Assigning team as " + okData);
         team_html.innerHTML = okData;
         team_html.dataset.value = okData;
-    }, displayError)
+    }, err => {
+        // On join failure, we don't display the error if it's a previously joined error, we simply take the team
+        console.log(err);
+        let errWords = err.split(" ");
+        let errTeam = errWords[errWords.length-1]
+        if (errTeam == "Black" || errTeam == "White") {
+            console.log("Already has team: " + errTeam);
+            team_html.innerHTML = errTeam;
+            team_html.dataset.value = errTeam;
+        }
+        else {
+            displayError(err);
+        }
+    })
 }
 
 function vote(move, id) {
@@ -63,16 +76,22 @@ function update_time_left() {
 
     getTimeleft(
 
-        (okData) =>{ time_left_html.innerHTML = okData + " seconds" }, // TODO: this should be interpolated by the frontend or something
+        (okData) =>{
+            // ROMES:TODO: Floor or Ceil? How to round is the question.
+            time_left_html.innerHTML = (Math.ceil(parseFloat(okData)/60)) + " minutes";
+        }, // TODO: this should be interpolated by the frontend or something
         displayError
     );
 
 }
 
-/* Util */
+function clearHighlights() {
+    // Stub
+}
 
 function displayError(errData) {
-        error_html.innerHTML = errData
-        setTimeout(() => error_html.innerHTML = "", 3000)
+    clearHighlights()
+    error_html.innerHTML = errData
+    setTimeout(() => error_html.innerHTML = "", 3000)
 }
 

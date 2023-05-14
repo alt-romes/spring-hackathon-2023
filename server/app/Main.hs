@@ -188,16 +188,19 @@ playGame State{..} = do
 
   -- Sleep
   threadDelay SLEEP_DELAY_MICROSECONDS
+  now <- getCurrentTime
 
   log "Making a move!"
 
   -- Compute next play
   votemap <- readTVarIO votes
   case computePlay votemap of
-    Nothing ->
+    Nothing -> do
       log "No votes at all, not making a move."
+      liftIO $ atomically do
+        has_played `modifyTVar` const S.empty
+        last_play `writeTVar` now
     Just play -> do
-      now <- getCurrentTime
 
       -- Update state with the play
       log ("Making the move " ++ show play)

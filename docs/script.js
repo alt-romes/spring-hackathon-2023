@@ -8,6 +8,17 @@ var play_made = false; //Made a play, have to wait for response
 var old_selected_piece;
 var new_selected_piece;
 
+const board = document.getElementById('table');
+
+window.onload = () => {
+
+    if(localStorage.getItem("uuid") === null)
+        localStorage.setItem("uuid", uuid());
+
+    // Join will set things correctly, whether it's an old join or a returning join
+    join(localStorage.getItem("uuid"));
+}
+
 document.addEventListener('DOMContentLoaded', start_state, false);
 
 function start_state() {
@@ -19,8 +30,6 @@ function start_state() {
     old_selected_piece = null;
     new_selected_piece = null;
     
-    // On load
-    var board = document.getElementById('table');
 
     var last = true;
     var color_white = 'white';
@@ -69,14 +78,10 @@ function start_state() {
             }
         }
     }
-
-
-    if(localStorage.getItem("uuid") === null)
-        localStorage.setItem("uuid", uuid());
-
-    join(localStorage.getItem("uuid"));
-
 }
+
+// function clear_highlights() {
+// }
 
 function reset_state() {
     start_state(); 
@@ -84,7 +89,7 @@ function reset_state() {
 }
 
 
-function callback(e) {
+function onclick_anywhere(e) {
     old_selected_piece = selected_piece;
     
     //Check background coloring
@@ -179,11 +184,7 @@ function populateTopmovesTable() {
 }
 
 
-if (document.addEventListener) {
-    document.addEventListener('click', callback, false);
-} else {
-    document.attachEvent('onclick', callback);
-}
+document.addEventListener('click', onclick_anywhere, false);
 
 function uuid() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
