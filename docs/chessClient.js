@@ -8,7 +8,7 @@ function get_board() {
 
 }
 function join(uuid) {
-    postJoin({UserId:""+uuid},(okData)=>{console.log("Success,Assigning team as" + okData);team=okData},(errData)=>{console.log("Error")})
+    postJoin(uuid,(okData)=>{console.log("Success,Assigning team as" + okData);team=okData},(errData)=>{console.log("Error")})
 }
 function vote(move, id) {
     console.log(move)
