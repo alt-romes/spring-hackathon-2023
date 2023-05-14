@@ -155,11 +155,12 @@ function populateTopmovesTable(moves) {
     //var num_new_adittions = data.length;
 
     /*for (const c of tableBody.children) {
-        if(tableBody.children.length + num_new_adittions > max && tableBody.children.length > 0) {
+        if(tableBody.children.length > 0) {
             var last_index = tableBody.children.length - 1;
             tableBody.removeChild(tableBody.children[last_index]);
         }
     }*/
+    tableBody.innerHTML = '';
 
     // Loop through the data and create table rows dynamically
     for (var i = 0; i < data.length; i++) {
