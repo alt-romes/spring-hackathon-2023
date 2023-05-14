@@ -51,7 +51,7 @@ function vote(move, id) {
 function getTopMoves(){
     getTopvotesByN(5,(okData)=>{
         console.log(okData)
-        populateTopmovesTable()
+        populateTopmovesTable(okData)
     },displayError)
 }
 

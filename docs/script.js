@@ -142,6 +142,9 @@ function onclick_anywhere(e) {
 function populateTopmovesTable(moves) {
 
     var data = moves;
+    if(moves == undefined){
+        data = [];
+    }
         //{ place: 1, move: "a3d4", number: 1 },
         //{ place: 2, move: "b3c2", number: uuid() },
         //{ place: 3, move: "d3e2", number: 3 },
