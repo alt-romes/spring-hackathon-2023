@@ -44,6 +44,7 @@ import Game.Chess
 type PlyText = Text
 type UserId  = Text
 
+
 data VoteReq = VoteReq { uid :: UserId
                        , ply :: PlyText
                        } deriving (Generic)
@@ -184,7 +185,7 @@ main = do
 
   _ <- forkIO (playGame state)
 
-  run 8081 (serve api (hoistServer api (nt state) server))
+  run 80 (serve api (hoistServer api (nt state) server))
 
   where nt :: State -> (∀ a. AppM a -> Handler a)
         nt s x = runReaderT x s

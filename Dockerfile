@@ -77,7 +77,8 @@ LABEL author="Oleg Grenrus <oleg.grenrus@iki.fi>"
 WORKDIR /app
 
 # Expose port
-EXPOSE 8081
+#EXPOSE 8081
+EXPOSE 80
 
 # Inherit the executable argument
 ARG EXECUTABLE
