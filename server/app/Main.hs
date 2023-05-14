@@ -206,6 +206,7 @@ playGame State{..} = do
         votes   `modifyTVar` const M.empty
         playing `modifyTVar` opponent
         last_play `writeTVar` now
+        has_played `modifyTVar` const S.empty
 
   -- Repeat
   playGame State{..}
