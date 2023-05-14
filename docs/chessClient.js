@@ -2,7 +2,6 @@ let myteam = "";
 let playingteam = "";
 let timeleft = 0;
 let res = "";
-let was_error = false;
 
 function get_board() {
     getBoard((okData) =>{
@@ -15,8 +14,7 @@ function get_board() {
         was_error = false;
 
     },(errData) =>{
-        res = errData;
-        was_error = true;
+        alert(errData);
     })
 }
 
