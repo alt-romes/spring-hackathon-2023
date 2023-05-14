@@ -48,6 +48,12 @@ function vote(move, id) {
         displayError
     )
 }
+function getTopMoves(){
+    getTopvotesByN(5,(okData)=>{
+        console.log(okData)
+        populateTopmovesTable()
+    },displayError)
+}
 
 
 function update_playing_team() {

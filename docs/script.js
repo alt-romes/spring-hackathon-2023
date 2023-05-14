@@ -139,25 +139,24 @@ function onclick_anywhere(e) {
 
 }
 
-function populateTopmovesTable() {
+function populateTopmovesTable(moves) {
 
-    var data = [
-        { place: 1, move: "a3d4", number: 1 },
+    var data = moves;
+        //{ place: 1, move: "a3d4", number: 1 },
         //{ place: 2, move: "b3c2", number: uuid() },
         //{ place: 3, move: "d3e2", number: 3 },
-    ];
+    //];
 
     var tableBody = document.getElementById('topmovestable');
-    var max = 5;
 
-    var num_new_adittions = data.length;
+    //var num_new_adittions = data.length;
 
-    for (const c of tableBody.children) {
+    /*for (const c of tableBody.children) {
         if(tableBody.children.length + num_new_adittions > max && tableBody.children.length > 0) {
             var last_index = tableBody.children.length - 1;
             tableBody.removeChild(tableBody.children[last_index]);
         }
-    }
+    }*/
 
     // Loop through the data and create table rows dynamically
     for (var i = 0; i < data.length; i++) {
