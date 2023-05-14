@@ -15,7 +15,7 @@ function start_state() {
     selected_piece = null;
 
     populateTopmovesTable();
-    setInfo();
+    updateInfo();
 
     old_selected_piece = null;
     new_selected_piece = null;
@@ -182,7 +182,8 @@ function populateTopmovesTable() {
     }
 }
 
-function setInfo() {
+
+function updateInfo() {
 
     var stat = document.getElementById('gstatus');
 
@@ -199,7 +200,7 @@ function setInfo() {
     }
 
     var t = document.getElementById('myteam');
-    t.textContent = "black";
+    t.textContent = team;
 
     t = document.getElementById('playingteam');
     t.textContent = "black";
