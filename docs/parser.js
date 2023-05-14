@@ -1,59 +1,59 @@
 let curr_state = ""
 function parse_fen(string) {
-    currPos = [7, 0]
+    currPos = [0, 0]
     curr_state = string;
     for (const c of string) {
         switch (c) {
-            case 'r':
+            case 'R':
                 drawPiece('♖', currPos);
                 currPos[1]++;
                 break;
-            case 'p':
+            case 'P':
                 drawPiece('♙', currPos);
                 currPos[1]++;
                 break;
-            case 'q':
+            case 'Q':
                 drawPiece('♕', currPos);
                 currPos[1]++;
                 break;
-            case 'k':
+            case 'K':
                 drawPiece('♔', currPos);
                 currPos[1]++;
                 break;
-            case 'n':
+            case 'N':
                 drawPiece('♘', currPos);
                 currPos[1]++;
                 break;
-            case 'b':
+            case 'B':
                 drawPiece('♗', currPos);
                 currPos[1]++;
                 break;
-            case 'R':
+            case 'r':
                 drawPiece('♜',currPos);
                 currPos[1]++;
                 break;
-            case 'Q':
+            case 'q':
                 drawPiece('♛',currPos);
                 currPos[1]++;
                 break;
-            case 'P':
+            case 'p':
                 drawPiece('♟︎',currPos);
                 currPos[1]++;
                 break;
-            case 'B':
+            case 'b':
                 drawPiece('♝',currPos);
                 currPos[1]++;
                 break;
-            case 'N':
+            case 'n':
                 drawPiece('♞',currPos);
                 currPos[1]++;
                 break;
-            case 'K':
+            case 'k':
                 drawPiece('♚',currPos);
                 currPos[1]++;
                 break;
             case '/':
-                currPos[0]--;
+                currPos[0]++;
                 currPos[1] = 0;
                 break;
             case ' ':
