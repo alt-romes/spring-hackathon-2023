@@ -123,7 +123,7 @@ function update_time_left() {
 
         (okData) =>{
             // ROMES:TODO: Floor or Ceil? How to round is the question.
-            time_left_html.innerHTML = (Math.ceil(parseFloat(okData)/60)) + " minutes";
+            time_left_html.innerHTML = (Math.ceil(parseFloat(okData))) + " seconds";
         }, // TODO: this should be interpolated by the frontend or something
         displayError
     );
