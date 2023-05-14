@@ -159,7 +159,6 @@ function populateTopmovesTable() {
             tableBody.removeChild(tableBody.children[last_index]);
         }
     }
-    console.log("Test: " + tableBody.children.length);
 
     // Loop through the data and create table rows dynamically
     for (var i = 0; i < data.length; i++) {
