@@ -112,6 +112,9 @@ function onclick_anywhere(e) {
 
                 selected_piece = hovered_piece;
                 new_selected_piece = selected_piece;
+
+                //Remove on mouse over function
+                piece.onmouseover = function() { };
             }
 
             if(old_selected_piece != null)  {
@@ -119,6 +122,8 @@ function onclick_anywhere(e) {
 
                 new_selected_piece = hovered_piece;
                 selected_piece = null;
+
+                piece.onmouseover = function() { };
             }
 
         }
