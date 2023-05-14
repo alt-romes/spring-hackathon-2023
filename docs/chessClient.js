@@ -45,7 +45,10 @@ function vote(move, id) {
         (okData) =>{
             console.log("Success submiting vote.\nMove submited:" +move)
         },
-        displayError
+        err => {
+            displayError(err);
+            reset_state(); 
+        }
     )
 }
 function getTopMoves(){
