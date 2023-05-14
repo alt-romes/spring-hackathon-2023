@@ -91,7 +91,7 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> ser
   where
     getBoard = do
       log "Received GET /board"
-      board' <- readTV . board =<< ask
+      board' <- readBoard
       log ("Board: " ++ show board')
       pure board'
 
@@ -99,9 +99,9 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> ser
       log "Received POST /joinGame"
 
       -- Ensure user is not yet registered
-      teams' <- readTV . teams =<< ask
+      teams' <- readTeams
       case M.lookup uid teams' of
-        Just c  -> throwError $ err400{errBody = fromString $ "User " ++ show uid ++ " is already in team " ++ show c}
+        Just c  -> fail400 ("User " ++ show uid ++ " is already in team " ++ show c)
         Nothing -> do
 
           -- Get next color and update next color
@@ -130,20 +130,24 @@ server = getBoard :<|> joinGame :<|> vote :<|> timeleft :<|> getPlaying :<|> ser
     vote (VoteReq uid plytext) = do
       log ("Received POST /vote by " ++ show uid)
 
+      -- Ensure player is in the team currently playing
+      curr_team <- readPlaying
+      teams'    <- readTeams
+      case M.lookup uid teams' of
+        Nothing -> fail400 ("User " ++ show uid ++ " has not joined!")
+        Just player_col -> when (curr_team /= player_col) $
+                            fail400 ("User " ++ show uid ++ " not in team " ++ show curr_team)
+
       -- Ensure hasn't played
-      has_played' <- readTV . has_played =<< ask
+      has_played' <- readHasPlayed
       if uid `S.member` has_played'
-        then do
-          let errmsg = "User " ++ show uid ++ "has already voted!"
-          log errmsg
-          throwError $ err400{errBody= fromString errmsg}
+        then
+          fail400 ("User " ++ show uid ++ "has already voted!")
         else do
-          pos <- readTV . board =<< ask
+          pos <- readBoard
           case fromUCI pos (unpack plytext) of
-            Nothing  -> do
-              let errmsg = "Move " ++ show plytext ++ " is invalid or illegal!"
-              log errmsg
-              throwError $ err400{errBody = fromString errmsg}
+            Nothing  ->
+              fail ("Move " ++ show plytext ++ " is invalid or illegal!")
             Just ply -> do
                 log ("User " ++ show uid ++ " did " ++ show ply)
                 liftIO . atomically . (`modifyTVar` M.alter updateVote ply) . votes =<< ask
@@ -223,3 +227,21 @@ modifyTV x = liftIO . atomically . modifyTVar x
 
 log :: MonadIO m => String -> m ()
 log = liftIO . putStrLn
+
+readBoard :: AppM Position
+readBoard = readTV . board =<< ask
+
+readTeams :: AppM (M.Map UserId Color)
+readTeams = readTV . teams =<< ask
+
+readPlaying :: AppM Color
+readPlaying = readTV . playing =<< ask
+
+readHasPlayed :: AppM (S.Set UserId)
+readHasPlayed = readTV . has_played =<< ask
+
+fail400 :: String -> AppM a
+fail400 s = do
+  log s
+  throwError $ err400{errBody=fromString s}
+
