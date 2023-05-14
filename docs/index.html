@@ -16,27 +16,27 @@
             <div id="table_and_title">
                 <div id="title">City Chess</div>
 
-                <table id="table" class="board" data-position="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1">
+                <table id="table" class="board" data-position="">
                     <tr>
-                        <th id="00">♜</th>
-                        <th id="01">♞</th>
-                        <th id="02">♝</th>
-                        <th id="03">♛</th>
-                        <th id="04">♚</th>
-                        <th id="05">♝</th>
-                        <th id="06">♞</th>
-                        <th id="07">♜</th>
+                        <th id="00">ㅤ</th>
+                        <th id="01">ㅤ</th>
+                        <th id="02">ㅤ</th>
+                        <th id="03">ㅤ</th>
+                        <th id="04">ㅤ</th>
+                        <th id="05">ㅤ</th>
+                        <th id="06">ㅤ</th>
+                        <th id="07">ㅤ</th>
                     </tr>
 
                     <tr>
-                        <th id="10">♟</th>
-                        <th id="11">♟</th>
-                        <th id="12">♟</th>
-                        <th id="13">♟</th>
-                        <th id="14">♟</th>
-                        <th id="15">♟</th>
-                        <th id="16">♟</th>
-                        <th id="17">♟</th>
+                        <th id="10">ㅤ</th>
+                        <th id="11">ㅤ</th>
+                        <th id="12">ㅤ</th>
+                        <th id="13">ㅤ</th>
+                        <th id="14">ㅤ</th>
+                        <th id="15">ㅤ</th>
+                        <th id="16">ㅤ</th>
+                        <th id="17">ㅤ</th>
                     </tr>
 
                     <tr>
@@ -84,27 +84,28 @@
                     </tr>
 
                     <tr>
-                        <th id="60">♙</th>
-                        <th id="61">♙</th>
-                        <th id="62">♙</th>
-                        <th id="63">♙</th>
-                        <th id="64">♙</th>
-                        <th id="65">♙</th>
-                        <th id="66">♙</th>
-                        <th id="67">♙</th>
+                        <th id="60">ㅤ</th>
+                        <th id="61">ㅤ</th>
+                        <th id="62">ㅤ</th>
+                        <th id="63">ㅤ</th>
+                        <th id="64">ㅤ</th>
+                        <th id="65">ㅤ</th>
+                        <th id="66">ㅤ</th>
+                        <th id="67">ㅤ</th>
                     </tr>
-
+                    
                     <tr>
-                        <th id="70">♖</th>
-                        <th id="71">♘</th>
-                        <th id="72">♗</th>
-                        <th id="73">♔</th>
-                        <th id="74">♕</th>
-                        <th id="75">♗</th>
-                        <th id="76">♘</th>
-                        <th id="77">♖</th>
+                        <th id="70">ㅤ</th>
+                        <th id="71">ㅤ</th>
+                        <th id="72">ㅤ</th>
+                        <th id="73">ㅤ</th>
+                        <th id="74">ㅤ</th>
+                        <th id="75">ㅤ</th>
+                        <th id="76">ㅤ</th>
+                        <th id="77">ㅤ</th>
                     </tr>
                 </table>
+                <div id="error-wrapper" hidden style="text-align:center;padding: 0.7rem 0.05rem;background:#c9261a;border: 2px solid black; box-shadow: 0px 0px 1px 1px black;"><strong style="color:whitesmoke;" id="error"></strong></div>
             </div>
 
             <!--
@@ -171,12 +172,11 @@
 
         </div>
 
-        <div style="text-align:center"><strong style="color:red" id="error"></strong></div>
+        <script type="text/javascript" src="api.js"></script>
+        <script type="text/javascript" src="parser.js"></script>
+        <script type="text/javascript" src="chessClient.js"></script>
+        <script type="text/javascript" src="script.js"></script>
+        <script type="text/javascript" src="main.js"></script>
 
     </body>
-    <script src="script.js"></script>
-    <script src="api.js"></script>
-    <script src="chessClient.js"></script>
-    <script src="parser.js"></script>
-    <script src="main.js"></script>
 </html>

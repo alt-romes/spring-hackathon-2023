@@ -1,19 +1,52 @@
-const board_html = document.querySelector("#table")
+const board      = document.querySelector("#table") // alias..
 const error_html = document.querySelector("#error")
+const error_wrapper = document.querySelector("#error-wrapper")
 const playing_html = document.querySelector("#playingteam")
 const time_left_html = document.querySelector("#timeswitch")
 const team_html = document.querySelector("#myteam")
 const stat_html = document.querySelector("#gstatus")
 
-// NOTE: Ignore the XMLParse errors, they still pass on the things as needed
+// Paint Black and White squares
+board.dataset.selected = "";
+function paintBoardBW() {
+    let bOrW = true;
+    var color_white = 'white';
+    var color_black = 'lightblue';
+    for (const tr of board.children[0].children) {
+        //Each tr
+        bOrW = !bOrW;
+        for (const th of tr.children) {
+            bOrW = !bOrW // cross pattern -- that's why we do it twice
+            let paint_color = bOrW ? color_white : color_black;
+            th.style.background      = paint_color;
+            th.style.backgroundcolor = paint_color;
+            th.dataset.color         = paint_color;
+            th.dataset.selected      = false;
+        }
+    }
+}
 
 function update_board() {
     getBoard((okData) =>{
 
         console.log(okData)
+        console.log(board.dataset.position)
 
-        if (board_html.dataset.position != okData)
+        if (board.dataset.position != okData) {
+            console.log("Updating board!")
+
+            // Parse and update board
             parse_fen_and_update(okData)
+
+            // Clear board
+            paintBoardBW();
+
+            // Clear play
+            board.dataset.selected = "";
+            
+            // Update position
+            board.dataset.position = okData;
+        }
 
     }, displayError)
 }
@@ -47,17 +80,18 @@ function vote(move, id) {
         },
         err => {
             displayError(err);
-            reset_state(); 
+            if (board.dataset.selected.length < 4) // If move is set, errors after don't unset this.
+                paintBoardBW(); // Clear highlights/plays
         }
     )
 }
+
 function getTopMoves(){
     getTopvotesByN(5,(okData)=>{
         console.log(okData)
         populateTopmovesTable(okData)
     },displayError)
 }
-
 
 function update_playing_team() {
 
@@ -96,13 +130,12 @@ function update_time_left() {
 
 }
 
-function clearHighlights() {
-    // Stub; TODO
-}
-
 function displayError(errData) {
-    clearHighlights()
-    error_html.innerHTML = errData
-    setTimeout(() => error_html.innerHTML = "", 3000)
+    error_html.innerHTML = errData;
+    error_wrapper.hidden = false;
+    setTimeout(() => {
+        error_html.innerHTML = "";
+        error_wrapper.hidden = true;
+    }, 4000)
 }
 
